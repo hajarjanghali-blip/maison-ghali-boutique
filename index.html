@@ -403,9 +403,9 @@
 
     <script>
         // Tracking visites
-        fetch("http://localhost:3000/api/visit", { method: "POST" }).catch(() => {});
+        fetch("/api/visit", { method: "POST" }).catch(() => {});
         document.addEventListener("visibilitychange", () => {
-            if (!document.hidden) fetch("http://localhost:3000/api/pageview", { method: "POST" }).catch(() => {});
+            if (!document.hidden) fetch("/api/pageview", { method: "POST" }).catch(() => {});
         });
     </script>
     <script src="products-data.js"></script>

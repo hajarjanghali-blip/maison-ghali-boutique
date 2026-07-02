@@ -135,7 +135,7 @@ function toggleCart() {
     document.getElementById("cart-overlay").classList.toggle("open");
 }
 
-const API = window.location.origin === "http://localhost:3000" ? "" : "http://localhost:3000";
+const API = "";
 
 async function submitOrderToBackend(orderData) {
     try {
