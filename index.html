@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maison Ghali - Accessoires de Prestige pour Homme</title>
+    <meta name="description" content="Maison Ghali : bracelets acier, montres et accessoires premium pour homme. Livraison partout au Maroc. Qualité garantie au meilleur prix.">
+    <meta name="keywords" content="bijoux, bracelets acier, montres, accessoires mode, boutique en ligne Maroc, Maison Ghali, cadeaux">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://maison-ghali.ma/">
+    <meta property="og:title" content="Maison Ghali - Accessoires de Prestige pour Homme">
+    <meta property="og:description" content="Découvrez notre collection exclusive d'accessoires premium pour homme. Livraison rapide au Maroc.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://maison-ghali.ma/">
+    <meta property="og:image" content="IMAGE/logo-maison-ghali.svg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="IMAGE/logo-maison-ghali.svg">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Maison Ghali",
+        "url": "https://maison-ghali.ma/",
+        "logo": "IMAGE/logo-maison-ghali.svg",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+212-645-420-457",
+            "contactType": "customer service",
+            "availableLanguage": ["French", "Arabic"]
+        },
+        "sameAs": [
+            "https://facebook.com/maison-ghali",
+            "https://instagram.com/maison-ghali"
+        ]
+    }
+    </script>
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1773834007101915');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1773834007101915&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+</head>
+<body>
+
+    <!-- BARRE DE NAVIGATION -->
+    <header>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
+        <div class="logo"><img src="IMAGE/logo-maison-ghali.svg" alt="Maison Ghali" class="logo-img"> Maison <span>Ghali</span></div>
+        <nav id="main-nav">
+            <a href="#home" onclick="closeMenu()">Accueil</a>
+            <a href="#products" onclick="closeMenu()">Boutique</a>
+            <a href="#contact" onclick="closeMenu()">Contact</a>
+            <a href="#" onclick="openRefundModal(); return false;">Retours</a>
+            <a href="#" onclick="openAboutModal(); return false;">À propos</a>
+        </nav>
+        <div class="header-right">
+            <div class="currency-picker">
+                <span id="current-currency">Devise : ...</span>
+            </div>
+            <div class="cart-icon" onclick="toggleCart()">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION ACCUEIL (HERO) -->
+    <section id="home" class="hero">
+        <div class="hero-badge">SINCE 2024</div>
+        <div class="hero-content">
+            <h1>L'&Eacute;l&eacute;gance &agrave; Votre Port&eacute;e</h1>
+            <p>D&eacute;couvrez notre collection exclusive de bijoux et accessoires premium. Livraison rapide partout au Maroc.</p>
+            <a href="#products" class="hero-btn">NOTRE BOUTIQUE</a>
+        </div>
+        <div class="hero-features">
+            <span><i class="fa-solid fa-truck"></i> Livraison 24h</span>
+            <span><i class="fa-solid fa-rotate-left"></i> Retour 30 jours</span>
+            <span><i class="fa-solid fa-shield"></i> Paiement s&eacute;curis&eacute;</span>
+        </div>
+    </section>
+
+    <!-- SECTION PRODUITS -->
+    <section id="products" class="products-section">
+        <div class="products-header">
+            <h2>Nos Produits</h2>
+            <p>Bracelets acier, montres &eacute;l&eacute;gantes et accessoires tendance. Chaque pi&egrave;ce est s&eacute;lectionn&eacute;e avec soin pour allier style et durabilit&eacute;.</p>
+        </div>
+        <div class="filter-area">
+            <div class="filter-label">Filtrer par</div>
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="all">Tous</button>
+                <button class="filter-btn" data-filter="bracelets">Bracelets</button>
+                <button class="filter-btn" data-filter="accessoires">Accessoires</button>
+            </div>
+        </div>
+        <div class="products-grid" id="products-grid">
+            <!-- Produits injectés par JS -->
+        </div>
+
+    </section>
+
+
+    <!-- SECTION CATÉGORIES SCROLL -->
+    <section class="categories-section">
+        <div class="categories-header">
+            <h2>Nos Cat&eacute;gories</h2>
+            <div class="categories-arrows">
+                <button class="cat-arrow cat-arrow-left" onclick="document.querySelector('.categories-scroll').scrollBy({left:-300,behavior:'smooth'})"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="cat-arrow cat-arrow-right" onclick="document.querySelector('.categories-scroll').scrollBy({left:300,behavior:'smooth'})"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+        <div class="categories-scroll-wrap">
+            <div class="categories-scroll">
+                <a href="#products" class="category-card" onclick="document.querySelector('[data-filter="bracelets"]').click()">
+                    <img src="IMAGE/bracelet-acier-dore-luxe.png" alt="Bracelets">
+                    <span>Bracelets</span>
+                </a>
+                <a href="#products" class="category-card" onclick="document.querySelector('[data-filter="accessoires"]').click()">
+                    <img src="IMAGE/ceinture-hermes.jpg" alt="Accessoires">
+                    <span>Accessoires</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION AVIS CLIENTS -->
+    <section class="reviews-section">
+        <h2>Nos Clients Parlent</h2>
+        <div class="reviews-grid">
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <p>"Bracelet de tr&egrave;s belle qualit&eacute;, livraison rapide. Je recommande !"</p>
+                <span class="review-author">— Karim B.</span>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+                <p>"Super produit, conforme aux photos. Service client au top."</p>
+                <span class="review-author">— Sara M.</span>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">★★★★☆</div>
+                <p>"Rapport qualit&eacute;-prix excellent. Je repasserai commande."</p>
+                <span class="review-author">— Omar J.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION NEWSLETTER -->
+    <section class="newsletter-section">
+        <h2>Abonnez-vous &agrave; notre site</h2>
+        <p>Utilisez aussi le code <strong>"BEST10"</strong> pour obtenir 10% de r&eacute;duction</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); showToast('Merci de votre abonnement !');">
+            <input type="email" placeholder="Votre email" required>
+            <button type="submit">S'abonner</button>
+        </form>
+    </section>
+
+    <!-- PANIER LATÉRAL -->
+    <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Mon Panier</h3>
+            <span class="cart-close" onclick="toggleCart()">&times;</span>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p class="cart-empty">Votre panier est vide.</p>
+        </div>
+        <div class="cart-footer" id="cart-footer" style="display:none;">
+            <div class="cart-total">
+                <span>Total :</span>
+                <span id="cart-total">0,00 &euro;</span>
+            </div>
+            <button class="btn-checkout" onclick="checkout()">Commander</button>
+        </div>
+    </div>
+
+    <!-- WHATSAPP FLOATING -->
+    <a href="https://wa.me/212645420457" target="_blank" class="whatsapp-float" title="Discuter sur WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- AGENT IA (CHATBOT) -->
+    <div class="ai-agent-container" id="ai-agent">
+        <div class="ai-agent-header" onclick="toggleChat()">
+            <i class="fa-solid fa-robot"></i> Assistant IA
+            <span style="margin-left:auto;font-size:12px;opacity:0.7;" id="chat-status">En ligne</span>
+        </div>
+        <div class="ai-agent-body" id="chat-body">
+            <div class="message bot">Bonjour ! Je suis votre assistant virtuel. Posez-moi une question sur nos produits ou votre commande.</div>
+        </div>
+        <div class="ai-agent-footer" id="chat-footer">
+            <input type="text" id="chat-input" placeholder="Posez votre question..." onkeydown="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- SECTION CONTACT -->
+    <section id="contact" class="contact-section">
+        <h2>Contactez-Nous</h2>
+        <div class="contact-container">
+            <form id="contact-form" onsubmit="event.preventDefault(); alert('Message envoyé !');">
+                <input type="text" placeholder="Votre nom" required>
+                <input type="email" placeholder="Votre email" required>
+                <textarea placeholder="Votre message" rows="5" required></textarea>
+                <button type="submit" class="btn-submit">Envoyer</button>
+            </form>
+            <div class="contact-info">
+                <p><i class="fa-solid fa-envelope"></i> contact@maison-ghali.ma</p>
+                <p><i class="fa-solid fa-phone"></i> <a href="https://wa.me/212645420457" target="_blank" style="color:#555;text-decoration:none;">+212 6 45 42 04 57</a></p>
+                <p><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/212645420457" target="_blank" style="color:#25D366;text-decoration:none;font-weight:bold;">06 45 42 04 57</a></p>
+                <p><i class="fa-solid fa-location-dot"></i> 123 Rue de la Mode, 75001 Paris</p>
+                <div class="social-links">
+                    <a href="https://facebook.com/maison-ghali" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="https://instagram.com/maison-ghali" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://wa.me/212645420457" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODALE À PROPOS -->
+    <div class="modal-overlay" id="about-modal" onclick="closeAboutModal(event)">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeAboutModal()">&times;</span>
+            <h2>&Agrave; Propos de Maison Ghali</h2>
+            <p class="modal-update">Notre histoire</p>
+
+            <h3>Notre Mission</h3>
+            <p>Chez Maison Ghali, nous croyons que le style ne devrait pas avoir de prix exorbitant. Notre mission est de rendre les accessoires de qualit&eacute; accessibles &agrave; tous, en proposant une s&eacute;lection rigoureuse de produits alliant design, durabilit&eacute; et &eacute;l&eacute;gance.</p>
+
+            <h3>Qui Sommes-Nous ?</h3>
+            <p>Fond&eacute;e en 2024, Maison Ghali est une jeune entreprise passionn&eacute;e par la mode et les accessoires. Notre &eacute;quipe bas&eacute;e &agrave; Paris parcourt le monde pour d&eacute;nicher les pi&egrave;ces les plus raffin&eacute;es : montres minimalistes, bracelets artisanaux et accessoires intemporels.</p>
+
+            <h3>Nos Valeurs</h3>
+            <ul>
+                <li><strong>Qualit&eacute;</strong> : Chaque produit est s&eacute;lectionn&eacute; avec soin pour garantir une qualit&eacute; irr&eacute;prochable.</li>
+                <li><strong>Authenticit&eacute;</strong> : Nous travaillons directement avec des artisans et des fabricants de confiance.</li>
+                <li><strong>Service Client</strong> : Votre satisfaction est notre priorit&eacute;. Notre &eacute;quipe est disponible 7j/7 pour r&eacute;pondre &agrave; vos questions.</li>
+                <li><strong>Durabilit&eacute;</strong> : Nous nous engageons &agrave; r&eacute;duire notre empreinte &eacute;cologique en optimisant nos emballages et en favorisant des mat&eacute;riaux responsables.</li>
+            </ul>
+
+            <h3>Pourquoi Nous Choisir ?</h3>
+            <p>Avec Maison Ghali, vous b&eacute;n&eacute;ficiez de produits authentiques, d'une exp&eacute;rience d'achat simplifi&eacute;e, d'une livraison rapide et d'un service client &agrave; l'&eacute;coute. Nous nous engageons &agrave; vous offrir le meilleur du e-commerce fran&ccedil;ais.</p>
+
+            <div class="about-stats">
+                <div class="stat">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Clients satisfaits</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Produits premium</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">4.8/5</span>
+                    <span class="stat-label">Note moyenne</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">24h</span>
+                    <span class="stat-label">Exp&eacute;dition</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE DÉTAIL PRODUIT -->
+    <div class="modal-overlay" id="product-modal" onclick="closeProductDetail(event)">
+        <div class="modal-content modal-product-detail">
+            <span class="modal-close" onclick="closeProductDetail()">&times;</span>
+            <div class="product-detail-layout" id="product-detail-content"></div>
+        </div>
+    </div>
+
+    <!-- MODALE DE COMMANDE / CONFIRMATION -->
+    <div class="modal-overlay" id="checkout-modal" onclick="closeCheckout(event)">
+        <div class="modal-content modal-checkout">
+            <span class="modal-close" onclick="closeCheckout()">&times;</span>
+            <h2>Passer la Commande</h2>
+            <div id="checkout-product-summary" class="checkout-summary"></div>
+            <form id="checkout-form" onsubmit="submitOrder(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Pr&eacute;nom *</label>
+                        <input type="text" id="field-prenom" placeholder="Jean" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nom *</label>
+                        <input type="text" id="field-nom" placeholder="Dupont" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>T&eacute;l&eacute;phone *</label>
+                    <input type="tel" id="field-telephone" placeholder="06 12 34 56 78" required>
+                </div>
+                <div class="form-group">
+                    <label>Adresse *</label>
+                    <input type="text" id="field-adresse" placeholder="123 Rue de la R&eacute;publique" required>
+                </div>
+                <div class="form-group">
+                    <label>Ville *</label>
+                    <input type="text" id="field-ville" placeholder="Paris" required>
+                </div>
+                <div class="checkout-total">
+                    <span>Total &agrave; payer :</span>
+                    <span id="checkout-total-price">0,00 &euro;</span>
+                </div>
+                <button type="submit" class="btn-confirm-order">Confirmer la Commande</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODALE POLITIQUE DE RETOUR -->
+    <div class="modal-overlay" id="refund-modal" onclick="closeRefundModal(event)">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeRefundModal()">&times;</span>
+            <h2>Politique de Retour et Remboursement</h2>
+            <p class="modal-update">Derni&egrave;re mise &agrave; jour : Juin 2026</p>
+
+            <h3>1. D&eacute;lai de R&eacute;tractation</h3>
+            <p>Vous disposez d'un d&eacute;lai de <strong>30 jours</strong> &agrave; compter de la r&eacute;ception de votre commande pour exercer votre droit de r&eacute;tractation sans avoir &agrave; justifier de motif.</p>
+
+            <h3>2. Conditions de Retour</h3>
+            <ul>
+                <li>Le produit doit &ecirc;tre dans son &eacute;tat d'origine, non utilis&eacute; et non endommag&eacute;.</li>
+                <li>L'emballage d'origine doit &ecirc;tre intact.</li>
+                <li>Les &eacute;tiquettes et accessoires doivent &ecirc;tre pr&eacute;sents.</li>
+                <li>Les articles personnalis&eacute;s ou sur mesure ne peuvent pas &ecirc;tre retourn&eacute;s.</li>
+            </ul>
+
+            <h3>3. Proc&eacute;dure de Retour</h3>
+            <ol>
+                <li>Contactez notre service client via le formulaire de contact ou par email &agrave; <strong>contact@maison-ghali.ma</strong>.</li>
+                <li>Vous recevrez un num&eacute;ro de retour (RMA) sous 24h ouvr&eacute;es.</li>
+                <li>Emballez soigneusement le produit dans son emballage d'origine.</li>
+                <li>Exp&eacute;diez le colis &agrave; l'adresse suivante :<br>
+                <strong>Maison Ghali - Service Retours<br>
+                123 Rue de la Mode, 75001 Paris, France</strong></li>
+            </ol>
+
+            <h3>4. Frais de Retour</h3>
+            <p>Les frais de retour sont &agrave; la charge du client, sauf en cas de produit d&eacute;fectueux ou d'erreur de notre part. Nous recommandons l'utilisation d'un envoi avec suivi.</p>
+
+            <h3>5. Remboursement</h3>
+            <p>Le remboursement sera effectu&eacute; sous <strong>14 jours</strong> apr&egrave;s r&eacute;ception et v&eacute;rification du colis retourn&eacute;. Le remboursement est effectu&eacute; via le m&ecirc;me moyen de paiement utilis&eacute; lors de l'achat.</p>
+
+            <h3>6. Produits D&eacute;fectueux</h3>
+            <p>Si vous recevez un produit d&eacute;fectueux ou endommag&eacute;, contactez-nous imm&eacute;diatement. Les frais de retour seront pris en charge par Maison Ghali et un &eacute;change ou remboursement sera effectu&eacute; sans frais suppl&eacute;mentaires.</p>
+
+            <h3>7. Contact</h3>
+            <p>Pour toute question concernant notre politique de retour, contactez-nous &agrave; <strong>contact@maison-ghali.ma</strong> ou au <strong>+33 1 23 45 67 89</strong>.</p>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Maison Ghali</h4>
+                <p>Accessoires de prestige pour homme depuis 2024. Votre &eacute;l&eacute;gance, notre passion.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Liens</h4>
+                <a href="#products">Boutique</a>
+                <a href="#" onclick="openAboutModal(); return false;">À propos</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h4>Aide</h4>
+                <a href="#" onclick="openRefundModal(); return false;">Politique de retour</a>
+                <a href="#" onclick="openRefundModal(); return false;">Livraison</a>
+                <a href="#" onclick="openRefundModal(); return false;">FAQ</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <a href="https://wa.me/212645420457">WhatsApp: +212 6 45 42 04 57</a>
+                <a href="mailto:contact@maison-ghali.ma">contact@maison-ghali.ma</a>
+                <div class="footer-social">
+                    <a href="https://facebook.com/maison-ghali" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="https://instagram.com/maison-ghali" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://wa.me/212645420457" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Maison Ghali. Tous droits r&eacute;serv&eacute;s.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tracking visites
+        fetch("http://localhost:3000/api/visit", { method: "POST" }).catch(() => {});
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) fetch("http://localhost:3000/api/pageview", { method: "POST" }).catch(() => {});
+        });
+    </script>
+    <script src="products-data.js"></script>
+    <script src="script.js"></script>
+    <script>
+        function toggleMenu() {
+            document.getElementById('main-nav').classList.toggle('open');
+        }
+        function closeMenu() {
+            document.getElementById('main-nav').classList.remove('open');
+        }
+    </script>
+    <script>
+        // Observer les cards produits existantes après render
+        const ro = new MutationObserver(() => {
+            document.querySelectorAll('.fade-in-up:not(.visible)').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
+            });
+        });
+        ro.observe(document.getElementById('products-grid'), { childList: true, subtree: true });
+        // Scroll reveal observer
+        const srObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in-up').forEach(el => srObserver.observe(el));
+    </script>
+</body>
+</html>

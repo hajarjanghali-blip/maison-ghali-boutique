@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maison Ghali - Tableau de Bord</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="dashboard-body">
+
+    <!-- BARRE LATÉRALE -->
+    <aside class="dash-sidebar" id="dash-sidebar">
+        <div class="dash-logo"><img src="IMAGE/logo-maison-ghali.svg" alt="Maison Ghali" class="logo-img"> Maison <span>Ghali</span></div>
+        <nav class="dash-nav">
+            <a href="#" class="dash-nav-item active" data-section="overview"><i class="fa-solid fa-chart-pie"></i> Vue d'ensemble</a>
+            <a href="#" class="dash-nav-item" data-section="sales"><i class="fa-solid fa-euro-sign"></i> Ventes</a>
+            <a href="#" class="dash-nav-item" data-section="traffic"><i class="fa-solid fa-chart-line"></i> Trafic</a>
+            <a href="#" class="dash-nav-item" data-section="products"><i class="fa-solid fa-box"></i> Produits</a>
+            <a href="#" class="dash-nav-item" data-section="orders"><i class="fa-solid fa-truck"></i> Commandes</a>
+        </nav>
+        <div class="dash-sidebar-footer">
+            <a href="index.html" class="dash-back-link"><i class="fa-solid fa-arrow-left"></i> Retour au site</a>
+            <a href="#" onclick="logout()" class="dash-back-link" style="border-top:1px solid rgba(255,255,255,0.05);"><i class="fa-solid fa-sign-out-alt"></i> D&eacute;connexion</a>
+        </div>
+    </aside>
+
+    <!-- CONTENEUR PRINCIPAL -->
+    <main class="dash-main">
+
+        <!-- EN-TÊTE -->
+        <header class="dash-header">
+            <button class="dash-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+            <h1>Tableau de Bord</h1>
+            <div class="dash-header-right">
+                <span id="dash-date"></span>
+                <div class="dash-avatar"><i class="fa-solid fa-user-shield"></i></div>
+            </div>
+        </header>
+
+        <!-- SECTION VUE D'ENSEMBLE -->
+        <section id="section-overview" class="dash-section active">
+
+            <!-- CARTES STATISTIQUES -->
+            <div class="dash-cards">
+                <div class="dash-card">
+                    <div class="dash-card-icon card-icon-revenue"><i class="fa-solid fa-euro-sign"></i></div>
+                    <div class="dash-card-info">
+                        <span class="dash-card-label">Revenu total</span>
+                        <span class="dash-card-value" id="stat-revenue">0,00 &euro;</span>
+                    </div>
+                    <div class="dash-card-change up">+12.5%</div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-card-icon card-icon-orders"><i class="fa-solid fa-shopping-cart"></i></div>
+                    <div class="dash-card-info">
+                        <span class="dash-card-label">Commandes</span>
+                        <span class="dash-card-value" id="stat-orders">0</span>
+                    </div>
+                    <div class="dash-card-change up">+8.2%</div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-card-icon card-icon-products"><i class="fa-solid fa-box"></i></div>
+                    <div class="dash-card-info">
+                        <span class="dash-card-label">Produits</span>
+                        <span class="dash-card-value" id="stat-products">0</span>
+                    </div>
+                    <div class="dash-card-change up">+3.1%</div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-card-icon card-icon-visitors"><i class="fa-solid fa-users"></i></div>
+                    <div class="dash-card-info">
+                        <span class="dash-card-label">Visiteurs (mois)</span>
+                        <span class="dash-card-value" id="stat-visitors">0</span>
+                    </div>
+                    <div class="dash-card-change up">+18.7%</div>
+                </div>
+            </div>
+
+            <!-- GRAPHIQUES -->
+            <div class="dash-charts-row">
+                <div class="dash-chart-box">
+                    <h3><i class="fa-solid fa-euro-sign"></i> Revenus (30 derniers jours)</h3>
+                    <canvas id="chart-sales-overview"></canvas>
+                </div>
+                <div class="dash-chart-box">
+                    <h3><i class="fa-solid fa-chart-line"></i> Trafic (30 derniers jours)</h3>
+                    <canvas id="chart-traffic-overview"></canvas>
+                </div>
+            </div>
+
+            <div class="dash-charts-row">
+                <div class="dash-chart-box">
+                    <h3><i class="fa-solid fa-chart-pie"></i> R&eacute;partition par cat&eacute;gorie</h3>
+                    <canvas id="chart-categories"></canvas>
+                </div>
+                <div class="dash-chart-box">
+                    <h3><i class="fa-solid fa-trophy"></i> Top Produits</h3>
+                    <canvas id="chart-top-products"></canvas>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SECTION VENTES -->
+        <section id="section-sales" class="dash-section">
+            <h2>Analyse des Ventes</h2>
+            <div class="dash-chart-box full-width">
+                <canvas id="chart-sales-detailed"></canvas>
+            </div>
+            <div class="dash-stats-table-wrap">
+                <table class="dash-table">
+                    <thead>
+                        <tr>
+                            <th>P&eacute;riode</th>
+                            <th>Revenu</th>
+                            <th>Commandes</th>
+                            <th>Panier moyen</th>
+                            <th>&Eacute;volution</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-sales">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION TRAFIC -->
+        <section id="section-traffic" class="dash-section">
+            <h2>Analyse du Trafic</h2>
+            <div class="dash-chart-box full-width">
+                <canvas id="chart-traffic-detailed"></canvas>
+            </div>
+            <div class="dash-stats-table-wrap">
+                <table class="dash-table">
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th>Visiteurs</th>
+                            <th>Pages / Session</th>
+                            <th>Taux de conversion</th>
+                            <th>Revenu g&eacute;n&eacute;r&eacute;</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-traffic">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION PRODUITS -->
+        <section id="section-products" class="dash-section">
+            <h2>Produits</h2>
+            <div class="dash-chart-box full-width">
+                <table class="dash-table">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Cat&eacute;gorie</th>
+                            <th>Prix</th>
+                            <th>Note</th>
+                            <th>Acheteurs</th>
+                            <th>Revenu estim&eacute;</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-products">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION COMMANDES -->
+        <section id="section-orders" class="dash-section">
+            <h2>Derni&egrave;res Commandes</h2>
+            <div class="dash-chart-box full-width">
+                <table class="dash-table">
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Client</th>
+                            <th>Produit</th>
+                            <th>Montant</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-orders">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="products-data.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4AF37;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#C5A02F;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8C6A1A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Monogramme MG entrelacé -->
+  <g transform="translate(5, 8) scale(0.3)">
+    <path d="M 10 90 V 10 L 50 50 L 90 10 V 90" stroke="url(#goldGradient)" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M 80 50 A 35 35 0 1 1 80 51 L 80 50 V 65 H 55" stroke="url(#goldGradient)" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M 80 50 L 80 65 H 70" stroke="url(#goldGradient)" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Texte MAISON GHALI -->
+  <g transform="translate(105, 22)" text-anchor="middle" fill="url(#goldGradient)">
+    <text x="0" y="0" font-family="Times New Roman, serif" font-size="12" letter-spacing="4">MAISON</text>
+    <text x="0" y="20" font-family="Times New Roman, serif" font-size="20" font-weight="bold" letter-spacing="6">GHALI</text>
+    <line x1="-50" y1="30" x2="50" y2="30" stroke="url(#goldGradient)" stroke-width="0.5"/>
+    <text x="0" y="42" font-family="Verdana, sans-serif" font-size="6" letter-spacing="2" font-variant="small-caps">ACCESSOIRES DE PRESTIGE</text>
+  </g>
+</svg>

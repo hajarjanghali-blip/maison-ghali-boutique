@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Produit - Maison Ghali</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1773834007101915');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1773834007101915&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+</head>
+<body>
+
+    <!-- BARRE DE NAVIGATION -->
+    <header>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
+        <div class="logo"><img src="IMAGE/logo-maison-ghali.svg" alt="Maison Ghali" class="logo-img"> Maison <span>Ghali</span></div>
+        <nav id="main-nav">
+            <a href="index.html" onclick="closeMenu()">Accueil</a>
+            <a href="index.html#products" onclick="closeMenu()">Boutique</a>
+            <a href="index.html#contact" onclick="closeMenu()">Contact</a>
+            <a href="#" onclick="openRefundModal(); return false;">Retours</a>
+            <a href="#" onclick="openAboutModal(); return false;">À propos</a>
+        </nav>
+        <div class="header-right">
+            <div class="currency-picker">
+                <span id="current-currency">Devise : ...</span>
+            </div>
+            <div class="cart-icon" onclick="toggleCart()">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION PRODUIT -->
+    <section class="product-page-section">
+        <div class="product-page-back">
+            <a href="index.html#products">&larr; Retour &agrave; la boutique</a>
+        </div>
+        <div class="product-page-layout" id="product-page-content">
+            <!-- Rempli par JS -->
+        </div>
+    </section>
+
+    <!-- PANIER LATÉRAL -->
+    <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Mon Panier</h3>
+            <span class="cart-close" onclick="toggleCart()">&times;</span>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p class="cart-empty">Votre panier est vide.</p>
+        </div>
+        <div class="cart-footer" id="cart-footer" style="display:none;">
+            <div class="cart-total">
+                <span>Total :</span>
+                <span id="cart-total">0,00 &euro;</span>
+            </div>
+            <button class="btn-checkout" onclick="checkout()">Commander</button>
+        </div>
+    </div>
+
+    <!-- WHATSAPP FLOATING -->
+    <a href="https://wa.me/212645420457" target="_blank" class="whatsapp-float" title="Discuter sur WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- AGENT IA (CHATBOT) -->
+    <div class="ai-agent-container" id="ai-agent">
+        <div class="ai-agent-header" onclick="toggleChat()">
+            <i class="fa-solid fa-robot"></i> Assistant IA
+            <span style="margin-left:auto;font-size:12px;opacity:0.7;" id="chat-status">En ligne</span>
+        </div>
+        <div class="ai-agent-body" id="chat-body">
+            <div class="message bot">Bonjour ! Je suis votre assistant virtuel. Posez-moi une question sur nos produits ou votre commande.</div>
+        </div>
+        <div class="ai-agent-footer" id="chat-footer">
+            <input type="text" id="chat-input" placeholder="Posez votre question..." onkeydown="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- MODALE POLITIQUE DE RETOUR -->
+    <div class="modal-overlay" id="refund-modal" onclick="closeRefundModal(event)">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeRefundModal()">&times;</span>
+            <h2>Politique de Retour et Remboursement</h2>
+            <p class="modal-update">Derni&egrave;re mise &agrave; jour : Juin 2026</p>
+            <h3>1. D&eacute;lai de R&eacute;tractation</h3>
+            <p>Vous disposez d'un d&eacute;lai de <strong>30 jours</strong> &agrave; compter de la r&eacute;ception de votre commande pour exercer votre droit de r&eacute;tractation sans avoir &agrave; justifier de motif.</p>
+            <h3>2. Conditions de Retour</h3>
+            <ul>
+                <li>Le produit doit &ecirc;tre dans son &eacute;tat d'origine, non utilis&eacute; et non endommag&eacute;.</li>
+                <li>L'emballage d'origine doit &ecirc;tre intact.</li>
+                <li>Les &eacute;tiquettes et accessoires doivent &ecirc;tre pr&eacute;sents.</li>
+                <li>Les articles personnalis&eacute;s ou sur mesure ne peuvent pas &ecirc;tre retourn&eacute;s.</li>
+            </ul>
+            <h3>3. Proc&eacute;dure de Retour</h3>
+            <ol>
+                <li>Contactez notre service client via le formulaire de contact ou par email &agrave; <strong>contact@maison-ghali.ma</strong>.</li>
+                <li>Vous recevrez un num&eacute;ro de retour (RMA) sous 24h ouvr&eacute;es.</li>
+                <li>Emballez soigneusement le produit dans son emballage d'origine.</li>
+                <li>Exp&eacute;diez le colis &agrave; l'adresse suivante :<br>
+                <strong>Maison Ghali - Service Retours<br>123 Rue de la Mode, 75001 Paris, France</strong></li>
+            </ol>
+            <h3>4. Frais de Retour</h3>
+            <p>Les frais de retour sont &agrave; la charge du client, sauf en cas de produit d&eacute;fectueux ou d'erreur de notre part.</p>
+            <h3>5. Remboursement</h3>
+            <p>Le remboursement sera effectu&eacute; sous <strong>14 jours</strong> apr&egrave;s r&eacute;ception et v&eacute;rification du colis retourn&eacute;.</p>
+            <h3>6. Produits D&eacute;fectueux</h3>
+            <p>Si vous recevez un produit d&eacute;fectueux ou endommag&eacute;, contactez-nous imm&eacute;diatement.</p>
+            <h3>7. Contact</h3>
+            <p>Pour toute question, contactez-nous &agrave; <strong>contact@maison-ghali.ma</strong>.</p>
+        </div>
+    </div>
+
+    <!-- MODALE CHECKOUT -->
+    <div class="modal-overlay" id="checkout-modal" onclick="closeCheckout(event)">
+        <div class="modal-content modal-checkout">
+            <span class="modal-close" onclick="closeCheckout()">&times;</span>
+            <h2>Passer la Commande</h2>
+            <div id="checkout-product-summary" class="checkout-summary"></div>
+            <form id="checkout-form" onsubmit="submitOrder(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Pr&eacute;nom *</label>
+                        <input type="text" id="field-prenom" placeholder="Jean" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nom *</label>
+                        <input type="text" id="field-nom" placeholder="Dupont" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>T&eacute;l&eacute;phone *</label>
+                    <input type="tel" id="field-telephone" placeholder="06 12 34 56 78" required>
+                </div>
+                <div class="form-group">
+                    <label>Adresse *</label>
+                    <input type="text" id="field-adresse" placeholder="123 Rue de la R&eacute;publique" required>
+                </div>
+                <div class="form-group">
+                    <label>Ville *</label>
+                    <input type="text" id="field-ville" placeholder="Paris" required>
+                </div>
+                <div class="checkout-total">
+                    <span>Total &agrave; payer :</span>
+                    <span id="checkout-total-price">0,00 &euro;</span>
+                </div>
+                <button type="submit" class="btn-confirm-order">Confirmer la Commande</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODALE À PROPOS -->
+    <div class="modal-overlay" id="about-modal" onclick="closeAboutModal(event)">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeAboutModal()">&times;</span>
+            <h2>&Agrave; Propos de Maison Ghali</h2>
+            <p class="modal-update">Notre histoire</p>
+            <h3>Notre Mission</h3>
+            <p>Chez Maison Ghali, nous croyons que le style ne devrait pas avoir de prix exorbitant.</p>
+            <h3>Qui Sommes-Nous ?</h3>
+            <p>Fond&eacute;e en 2024, Maison Ghali est une jeune entreprise passionn&eacute;e par la mode.</p>
+            <h3>Nos Valeurs</h3>
+            <ul>
+                <li><strong>Qualit&eacute;</strong> : Chaque produit est s&eacute;lectionn&eacute; avec soin.</li>
+                <li><strong>Authenticit&eacute;</strong> : Nous travaillons avec des artisans de confiance.</li>
+                <li><strong>Service Client</strong> : Notre &eacute;quipe est disponible 7j/7.</li>
+            </ul>
+            <h3>Pourquoi Nous Choisir ?</h3>
+            <p>Avec Maison Ghali, vous b&eacute;n&eacute;ficiez de produits authentiques, d'une exp&eacute;rience d'achat simplifi&eacute;e, d'une livraison rapide et d'un service client &agrave; l'&eacute;coute. Nous nous engageons &agrave; vous offrir le meilleur du e-commerce fran&ccedil;ais.</p>
+            <div class="about-stats">
+                <div class="stat">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Clients satisfaits</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Produits premium</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">4.8/5</span>
+                    <span class="stat-label">Note moyenne</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">24h</span>
+                    <span class="stat-label">Exp&eacute;dition</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-links">
+            <a href="#" onclick="openRefundModal(); return false;">Politique de retour</a>
+            <a href="#" onclick="openAboutModal(); return false;">À propos</a>
+            <a href="index.html#contact">Contact</a>
+            <a href="index.html#products">Boutique</a>
+        </div>
+        <p>&copy; 2026 Maison Ghali. Tous droits r&eacute;serv&eacute;s.</p>
+    </footer>
+
+    <script src="products-data.js"></script>
+    <script src="script.js"></script>
+    <script>
+        function toggleMenu() {
+            document.getElementById('main-nav').classList.toggle('open');
+        }
+        function closeMenu() {
+            document.getElementById('main-nav').classList.remove('open');
+        }
+    </script>
+    <script>
+        /* ===== PAGE PRODUIT ===== */
+        let ppQty = 1;
+        let ppColor = null;
+        let ppId = null;
+
+        function renderProductPage() {
+            const params = new URLSearchParams(window.location.search);
+            const id = parseInt(params.get("id"));
+            const p = products.find(x => x.id === id);
+            if (!p) {
+                document.getElementById("product-page-content").innerHTML = '<div style="text-align:center;padding:60px 20px;"><h2>Produit non trouv&eacute;</h2><a href="index.html" style="color:#c5a880;">Retour &agrave; la boutique</a></div>';
+                document.getElementById("page-title").textContent = "Produit introuvable - Maison Ghali";
+                return;
+            }
+
+            ppId = id;
+            ppQty = 1;
+            ppColor = p.colors ? Object.keys(p.colors)[0] : null;
+            document.getElementById("page-title").textContent = p.name + " - Maison Ghali";
+            // SEO meta dynamiques
+            document.querySelector('meta[name="description"]')?.remove();
+            const metaDesc = document.createElement('meta');
+            metaDesc.name = "description";
+            metaDesc.content = (p.desc || "").replace(/<[^>]+>/g, '').substring(0, 160);
+            document.head.appendChild(metaDesc);
+            document.querySelector('link[rel="canonical"]')?.remove();
+            const link = document.createElement('link');
+            link.rel = "canonical";
+            link.href = "https://maison-ghali.ma/product.html?id=" + p.id;
+            document.head.appendChild(link);
+            ['og:title','og:description','og:image','og:url'].forEach(function(prop) {
+                document.querySelector('meta[property="' + prop + '"]')?.remove();
+            });
+            var ogTitle = document.createElement('meta'); ogTitle.setAttribute('property','og:title'); ogTitle.content = p.name + ' - Maison Ghali'; document.head.appendChild(ogTitle);
+            var ogDesc = document.createElement('meta'); ogDesc.setAttribute('property','og:description'); ogDesc.content = (p.desc || "").replace(/<[^>]+>/g, '').substring(0, 160); document.head.appendChild(ogDesc);
+            var ogImg = document.createElement('meta'); ogImg.setAttribute('property','og:image'); ogImg.content = p.image; document.head.appendChild(ogImg);
+            var ogUrl = document.createElement('meta'); ogUrl.setAttribute('property','og:url'); ogUrl.content = "https://maison-ghali.ma/product.html?id=" + p.id; document.head.appendChild(ogUrl);
+            // JSON-LD produit
+            document.getElementById('product-ld')?.remove();
+            var ld = document.createElement('script');
+            ld.id = 'product-ld';
+            ld.type = 'application/ld+json';
+            ld.textContent = JSON.stringify({
+                "@context": "https://schema.org/",
+                "@type": "Product",
+                "name": p.name,
+                "image": p.image,
+                "description": (p.desc || "").replace(/<[^>]+>/g, ''),
+                "sku": "MG-" + p.id,
+                "offers": {
+                    "@type": "Offer",
+                    "url": "https://maison-ghali.ma/product.html?id=" + p.id,
+                    "priceCurrency": "MAD",
+                    "price": (p.price * 10.83).toFixed(2),
+                    "availability": "https://schema.org/InStock"
+                }
+            });
+            document.head.appendChild(ld);
+            if (typeof fbq === 'function') {
+                fbq('track', 'ViewContent', { content_name: p.name, content_ids: [p.id], content_type: 'product', value: p.price, currency: 'MAD' });
+            }
+
+            const galleryImages = p.gallery || [p.image];
+            const thumbsHtml = galleryImages.length > 1 ? '<div class="pdetail-thumbs">' +
+                galleryImages.map(function(img, i) {
+                    return '<img src="' + img + '" class="pdetail-thumb' + (i === 0 ? ' active' : '') + '" onclick="ppSwitchImage(' + i + ')" alt="' + p.name + ' - vue ' + (i+1) + '">';
+                }).join("") +
+            '</div>' : '';
+
+            document.getElementById("product-page-content").innerHTML =
+                '<div class="pdetail-image">' +
+                    '<img id="pp-main-img" src="' + galleryImages[0] + '" alt="' + p.name + ' - Maison Ghali">' +
+                    thumbsHtml +
+                '</div>' +
+                '<div class="pdetail-info">' +
+                    '<span class="pdetail-category">' + p.category + '</span>' +
+                    '<h2 class="pdetail-title">' + p.name + '</h2>' +
+                    '<div class="product-rating">' + renderStars(p.rating) + '</div>' +
+                    '<div class="pdetail-price">' + formatPrice(p.price) + '</div>' +
+                    '<p class="pdetail-tax">TVA et livraison incluses</p>' +
+                    '<p class="pdetail-desc">' + p.desc + '</p>' +
+                    '<div class="pdetail-options">' +
+                        (p.colors ? '<div class="pdetail-option">' +
+                            '<label>Couleur</label>' +
+                            '<div class="color-swatches">' +
+                                Object.keys(p.colors).map(function(c) {
+                                    return '<button class="color-swatch' + (c === ppColor ? ' active' : '') + '" data-color="' + c + '" onclick="ppSelectColor(\'' + c + '\')">' + c + '</button>';
+                                }).join("") +
+                            '</div>' +
+                        '</div>' : '') +
+                        '<div class="pdetail-option">' +
+                            '<label>Quantit&eacute;</label>' +
+                            '<div class="pdetail-qty">' +
+                                '<button onclick="ppQty=Math.max(1,ppQty-1);document.getElementById(\'pp-qty-num\').textContent=ppQty">-</button>' +
+                                '<span id="pp-qty-num">1</span>' +
+                                '<button onclick="ppQty++;document.getElementById(\'pp-qty-num\').textContent=ppQty">+</button>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="pdetail-actions">' +
+                        '<button class="btn-add-cart pdetail-add-btn" onclick="for(let i=0;i<ppQty;i++)addToCart(' + p.id + ', ppColor);showToast(\'Ajout&eacute; au panier\');">' +
+                            '<i class="fa-solid fa-cart-shopping"></i> Ajouter au panier' +
+                        '</button>' +
+                        '<button class="btn-buy-now pdetail-buy-btn" onclick="openCheckout(' + p.id + ', ppQty, ppColor);">' +
+                            '<i class="fa-solid fa-bolt"></i> Commander' +
+                        '</button>' +
+                    '</div>' +
+                    '<div class="pdetail-buyers">' +
+                        '<strong><i class="fa-solid fa-user-check"></i> Achet&eacute; par :</strong> ' +
+                        p.buyers.map(function(b) { return '<span>' + b + '</span>'; }).join(", ") +
+                    '</div>' +
+                    '<div class="pdetail-features">' +
+                        '<h3>Caract&eacute;ristiques</h3>' +
+                        '<ul>' +
+                            '<li><strong>Cat&eacute;gorie :</strong> ' + p.category + '</li>' +
+                            '<li><strong>Note :</strong> ' + p.rating + '/5</li>' +
+                            '<li><strong>Prix :</strong> ' + formatPrice(p.price) + '</li>' +
+                            '<li><strong>Livraison :</strong> 3 &agrave; 5 jours ouvr&eacute;s</li>' +
+                            '<li><strong>Garantie :</strong> 2 ans</li>' +
+                        '</ul>' +
+                    '</div>' +
+                    '<div class="pdetail-contact">' +
+                        '<p><i class="fa-solid fa-envelope"></i> contact@maison-ghali.ma</p>' +
+                        '<p><i class="fa-solid fa-phone"></i> +212 6 45 42 04 57</p>' +
+                        '<p><i class="fa-solid fa-truck"></i> Livraison partout dans le monde</p>' +
+                    '</div>' +
+                '</div>';
+
+            window.scrollTo(0, 0);
+        }
+
+        function ppSelectColor(color) {
+            ppColor = color;
+            const p = products.find(x => x.id === ppId);
+            if (p && p.colors && p.colors[color]) {
+                document.querySelector("#product-page-content .pdetail-image img").src = p.colors[color];
+            }
+            document.querySelectorAll(".color-swatch").forEach(function(el) {
+                el.classList.toggle("active", el.dataset.color === color);
+            });
+        }
+
+        function ppSwitchImage(index) {
+            const p = products.find(x => x.id === ppId);
+            if (!p) return;
+            const gallery = p.gallery || [p.image];
+            if (!gallery[index]) return;
+            document.getElementById("pp-main-img").src = gallery[index];
+            document.querySelectorAll(".pdetail-thumb").forEach(function(el, i) {
+                el.classList.toggle("active", i === index);
+            });
+        }
+
+        renderProductPage();
+    </script>
+</body>
+</html>
