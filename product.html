@@ -219,6 +219,12 @@
         <p>&copy; 2026 Maison Ghali. Tous droits r&eacute;serv&eacute;s.</p>
     </footer>
 
+    <script>
+        fetch("/api/visit", { method: "POST" }).catch(() => {});
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) fetch("/api/pageview", { method: "POST" }).catch(() => {});
+        });
+    </script>
     <script src="products-data.js"></script>
     <script src="script.js"></script>
     <script>
