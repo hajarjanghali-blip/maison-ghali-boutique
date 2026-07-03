@@ -156,7 +156,7 @@ async function loadData() {
     }
 
     // Init charts
-    initCharts();
+    try { initCharts(); } catch (e) { console.warn("Chart error:", e); }
     } finally { loadingData = false; }
 }
 
@@ -310,6 +310,23 @@ function toggleSidebar() {
 document.getElementById("dash-date").textContent = new Date().toLocaleDateString("fr-FR", {
     weekday: "long", day: "numeric", month: "long", year: "numeric"
 });
+
+/* ===== EXPORT JSON ===== */
+async function exportOrders() {
+    try {
+        const data = await fetchJSON(API + "/api/orders/export");
+        if (!data) { alert("Aucune commande à exporter"); return; }
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "commandes-maison-ghali-" + new Date().toISOString().slice(0, 10) + ".json";
+        a.click();
+        URL.revokeObjectURL(url);
+    } catch (e) {
+        alert("Erreur d'export : " + e.message);
+    }
+}
 
 /* ===== NOTIFICATION SONORE ===== */
 function playNotifSound() {

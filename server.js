@@ -17,8 +17,34 @@ app.use((req, res, next) => {
 app.use(express.static(__dirname));
 
 /* ===== BDD ===== */
-const db = new Database(path.join(__dirname, "maison-ghali.db"));
+const isRender = !!process.env.RENDER;
+const DB_PATH = process.env.DB_PATH || (isRender ? "/tmp/maison-ghali.db" : path.join(__dirname, "maison-ghali.db"));
+const db = new Database(DB_PATH);
 db.pragma("journal_mode = WAL");
+
+// Restaurer les commandes depuis le backup JSON si la DB est vide
+const fs = require("fs");
+const BACKUP_PATH = process.env.BACKUP_PATH || path.join(__dirname, "orders-backup.json");
+function restoreFromBackup() {
+    try {
+        if (!fs.existsSync(BACKUP_PATH)) return;
+        const count = db.prepare("SELECT COUNT(*) as c FROM orders").get().c;
+        if (count > 0) return;
+        const data = JSON.parse(fs.readFileSync(BACKUP_PATH, "utf8"));
+        if (!data.length) return;
+        const insert = db.prepare(`INSERT INTO orders (prenom, nom, telephone, adresse, ville, product_id, product_name, product_price, quantite, total, date) VALUES (?,?,?,?,?,?,?,?,?,?,?)`);
+        const tx = db.transaction(() => {
+            for (const o of data) {
+                insert.run(o.prenom, o.nom, o.telephone, o.adresse, o.ville, o.product_id, o.product_name, o.product_price, o.quantite, o.total, o.date);
+            }
+        });
+        tx();
+        console.log(`Restauré ${data.length} commandes depuis orders-backup.json`);
+    } catch (e) {
+        console.warn("Erreur restauration backup:", e.message);
+    }
+}
+restoreFromBackup();
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS orders (
@@ -66,6 +92,16 @@ const upsertPageView = db.prepare(`
 
 /* ===== ROUTES ===== */
 
+// Sauvegarder les commandes dans le fichier backup
+function backupOrders() {
+    try {
+        const all = db.prepare("SELECT * FROM orders").all();
+        fs.writeFileSync(BACKUP_PATH, JSON.stringify(all, null, 2));
+    } catch (e) {
+        console.warn("Erreur backup:", e.message);
+    }
+}
+
 // Commande
 app.post("/api/order", (req, res) => {
   const { prenom, nom, telephone, adresse, ville, product_id, product_name, product_price, quantite } = req.body;
@@ -74,7 +110,14 @@ app.post("/api/order", (req, res) => {
   }
   const total = (product_price || 0) * (quantite || 1);
   insertOrder.run(prenom, nom, telephone, adresse, ville, product_id, product_name, product_price, quantite || 1, total);
+  backupOrders();
   res.json({ success: true });
+});
+
+// Exporter toutes les commandes en JSON
+app.get("/api/orders/export", (req, res) => {
+    const all = db.prepare("SELECT * FROM orders ORDER BY date DESC").all();
+    res.json(all);
 });
 
 // Tracker visite

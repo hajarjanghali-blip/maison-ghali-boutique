@@ -172,7 +172,10 @@
 
         <!-- SECTION COMMANDES -->
         <section id="section-orders" class="dash-section">
-            <h2>Derni&egrave;res Commandes</h2>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
+                <h2 style="margin:0;">Derni&egrave;res Commandes</h2>
+                <button onclick="exportOrders()" class="btn-export" style="padding:10px 20px;border:1px solid var(--gold);background:transparent;color:var(--gold);border-radius:8px;cursor:pointer;font-size:13px;min-height:44px;"><i class="fa-solid fa-download"></i> Exporter JSON</button>
+            </div>
             <div class="dash-chart-box full-width">
                 <table class="dash-table">
                     <thead>
