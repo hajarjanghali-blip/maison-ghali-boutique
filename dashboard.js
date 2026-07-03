@@ -41,7 +41,11 @@ function fillMissingDates(data, days = 30) {
     return result;
 }
 
+let loadingData = false;
 async function loadData() {
+    if (loadingData) return;
+    loadingData = true;
+    try {
     const [stats, revenueDaily, trafficDaily, periods, sources, topProducts, latestOrders] = await Promise.all([
         fetchJSON(API + "/api/stats"),
         fetchJSON(API + "/api/revenue/daily"),
@@ -153,6 +157,7 @@ async function loadData() {
 
     // Init charts
     initCharts();
+    } finally { loadingData = false; }
 }
 
 function calculateStats() {
