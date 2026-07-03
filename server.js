@@ -24,7 +24,7 @@ db.pragma("journal_mode = WAL");
 
 // Restaurer les commandes depuis le backup JSON si la DB est vide
 const fs = require("fs");
-const BACKUP_PATH = process.env.BACKUP_PATH || path.join(__dirname, "orders-backup.json");
+const BACKUP_PATH = process.env.BACKUP_PATH || (isRender ? "/tmp/orders-backup.json" : path.join(__dirname, "orders-backup.json"));
 function restoreFromBackup() {
     try {
         if (!fs.existsSync(BACKUP_PATH)) return;
