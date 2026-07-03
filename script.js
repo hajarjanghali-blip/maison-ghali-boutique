@@ -314,6 +314,18 @@ function openProductDetail(id) {
             '<button class="btn-add-cart pdetail-add-btn" onclick="for(let i=0;i<pdetailQty;i++)addToCart(' + p.id + ', pdetailColor);closeProductDetail();">' +
                 '<i class="fa-solid fa-cart-shopping"></i> Ajouter au panier' +
             '</button>' +
+            '<button class="btn-whatsapp-order" onclick="orderViaWhatsApp(' + p.id + ', pdetailQty, pdetailColor);">' +
+                '<i class="fa-brands fa-whatsapp"></i> Commander via WhatsApp' +
+            '</button>' +
+            '<div class="pdetail-stock">' +
+                '<span class="stock-high"><i class="fa-solid fa-circle"></i> En stock</span>' +
+                '<span class="stock-sold"><i class="fa-solid fa-fire"></i> 18 vendus ce mois</span>' +
+            '</div>' +
+            '<div class="pdetail-trust">' +
+                '<span><i class="fa-solid fa-truck"></i> Livraison 24h</span>' +
+                '<span><i class="fa-solid fa-rotate-left"></i> Retour 30 jours</span>' +
+                '<span><i class="fa-solid fa-shield"></i> Paiement sécurisé</span>' +
+            '</div>' +
             '<div class="pdetail-buyers">' +
                 '<strong><i class="fa-solid fa-user-check"></i> Achet&eacute; par :</strong> ' +
                 p.buyers.map(function(b) { return '<span>' + b + '</span>'; }).join(", ") +
@@ -445,6 +457,22 @@ function submitOrder(event) {
         closeCheckout();
         setTimeout(() => showToast(`Commande confirmée ! Merci ${prenom}.`), 300);
     }
+}
+
+/* ===== COMMANDE VIA WHATSAPP ===== */
+function orderViaWhatsApp(id, qty, color) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    const q = qty || 1;
+    const c = color || "";
+    const name = p.name + (c ? " (" + c + ")" : "");
+    const total = (p.price * q * 10.83).toFixed(2);
+    const msg = "Bonjour Maison Ghali ! Je souhaite commander :%0A" +
+        "- Produit : " + name + "%0A" +
+        "- Quantité : " + q + "%0A" +
+        "- Prix : " + total + " DHS%0A" +
+        "Merci de me contacter pour la livraison.";
+    window.open("https://wa.me/212645420457?text=" + msg, "_blank");
 }
 
 /* ===== TOAST NOTIFICATION ===== */

@@ -26,6 +26,12 @@
 </head>
 <body>
 
+    <!-- BANNIÈRE PROMO -->
+    <div class="promo-banner">
+        <span>🇲🇦 Livraison OFFERTE au Maroc</span>
+        <span>|</span>
+        <span>Code <strong>BEST10</strong> = -10%</span>
+    </div>
     <!-- BARRE DE NAVIGATION -->
     <header>
         <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
@@ -342,6 +348,18 @@
                         '<button class="btn-buy-now pdetail-buy-btn" onclick="openCheckout(' + p.id + ', ppQty, ppColor);">' +
                             '<i class="fa-solid fa-bolt"></i> Commander' +
                         '</button>' +
+                    '</div>' +
+                    '<button class="btn-whatsapp-order" onclick="orderViaWhatsApp(' + p.id + ', ppQty, ppColor);">' +
+                        '<i class="fa-brands fa-whatsapp"></i> Commander via WhatsApp' +
+                    '</button>' +
+                    '<div class="pdetail-stock">' +
+                        '<span class="stock-high"><i class="fa-solid fa-circle"></i> En stock</span>' +
+                        '<span class="stock-sold"><i class="fa-solid fa-fire"></i> 18 vendus ce mois</span>' +
+                    '</div>' +
+                    '<div class="pdetail-trust">' +
+                        '<span><i class="fa-solid fa-truck"></i> Livraison 24h</span>' +
+                        '<span><i class="fa-solid fa-rotate-left"></i> Retour 30 jours</span>' +
+                        '<span><i class="fa-solid fa-shield"></i> Paiement sécurisé</span>' +
                     '</div>' +
                     '<div class="pdetail-buyers">' +
                         '<strong><i class="fa-solid fa-user-check"></i> Achet&eacute; par :</strong> ' +
