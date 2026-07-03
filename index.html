@@ -330,6 +330,14 @@
         </div>
     </div>
 
+    <!-- LIGHTBOX -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation();lightboxNav(-1)">&#10094;</button>
+        <button class="lightbox-nav lightbox-next" onclick="event.stopPropagation();lightboxNav(1)">&#10095;</button>
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
     <!-- MODALE POLITIQUE DE RETOUR -->
     <div class="modal-overlay" id="refund-modal" onclick="closeRefundModal(event)">
         <div class="modal-content">

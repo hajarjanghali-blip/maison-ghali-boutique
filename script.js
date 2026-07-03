@@ -277,13 +277,13 @@ function openProductDetail(id) {
     const galleryImages = p.gallery || [p.image];
     const thumbsHtml = galleryImages.length > 1 ? '<div class="pdetail-thumbs">' +
         galleryImages.map(function(img, i) {
-            return '<img src="' + img + '" class="pdetail-thumb' + (i === 0 ? ' active' : '') + '" onclick="switchProductImage(' + p.id + ', ' + i + ')" alt="">';
+            return '<img src="' + img + '" class="pdetail-thumb' + (i === 0 ? ' active' : '') + '" onclick="switchProductImage(' + p.id + ', ' + i + ');openLightbox(' + JSON.stringify(galleryImages) + ', ' + i + ')" alt="">';
         }).join("") +
     '</div>' : '';
 
     document.getElementById("product-detail-content").innerHTML =
         '<div class="pdetail-image">' +
-            '<img id="pdetail-main-img" src="' + galleryImages[0] + '" alt="' + p.name + '">' +
+            '<img id="pdetail-main-img" src="' + galleryImages[0] + '" alt="' + p.name + '" onclick="openLightbox(' + JSON.stringify(galleryImages) + ', 0)" style="cursor:pointer">' +
             thumbsHtml +
         '</div>' +
         '<div class="pdetail-info">' +
@@ -474,6 +474,36 @@ function orderViaWhatsApp(id, qty, color) {
         "Merci de me contacter pour la livraison.";
     window.open("https://wa.me/212645420457?text=" + msg, "_blank");
 }
+
+/* ===== LIGHTBOX ===== */
+let lightboxImages = [];
+let lightboxIndex = 0;
+
+function openLightbox(images, index) {
+    if (!images || images.length === 0) return;
+    lightboxImages = images;
+    lightboxIndex = index ?? 0;
+    document.getElementById("lightbox-img").src = lightboxImages[lightboxIndex];
+    document.getElementById("lightbox").classList.add("open");
+    document.body.style.overflow = "hidden";
+}
+
+function closeLightbox(event) {
+    if (event && event.target !== document.getElementById("lightbox")) return;
+    document.getElementById("lightbox").classList.remove("open");
+    document.body.style.overflow = "";
+}
+
+function lightboxNav(dir) {
+    lightboxIndex = (lightboxIndex + dir + lightboxImages.length) % lightboxImages.length;
+    document.getElementById("lightbox-img").src = lightboxImages[lightboxIndex];
+}
+
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowLeft" && document.getElementById("lightbox").classList.contains("open")) lightboxNav(-1);
+    if (e.key === "ArrowRight" && document.getElementById("lightbox").classList.contains("open")) lightboxNav(1);
+});
 
 /* ===== TOAST NOTIFICATION ===== */
 function showToast(msg) {

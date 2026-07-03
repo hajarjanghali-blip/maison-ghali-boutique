@@ -137,6 +137,14 @@
         </div>
     </div>
 
+    <!-- LIGHTBOX -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation();lightboxNav(-1)">&#10094;</button>
+        <button class="lightbox-nav lightbox-next" onclick="event.stopPropagation();lightboxNav(1)">&#10095;</button>
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
     <!-- MODALE CHECKOUT -->
     <div class="modal-overlay" id="checkout-modal" onclick="closeCheckout(event)">
         <div class="modal-content modal-checkout">
@@ -307,13 +315,13 @@
             const galleryImages = p.gallery || [p.image];
             const thumbsHtml = galleryImages.length > 1 ? '<div class="pdetail-thumbs">' +
                 galleryImages.map(function(img, i) {
-                    return '<img src="' + img + '" class="pdetail-thumb' + (i === 0 ? ' active' : '') + '" onclick="ppSwitchImage(' + i + ')" alt="' + p.name + ' - vue ' + (i+1) + '">';
+                    return '<img src="' + img + '" class="pdetail-thumb' + (i === 0 ? ' active' : '') + '" onclick="ppSwitchImage(' + i + ');openLightbox(' + JSON.stringify(galleryImages) + ', ' + i + ')" alt="' + p.name + ' - vue ' + (i+1) + '">';
                 }).join("") +
             '</div>' : '';
 
             document.getElementById("product-page-content").innerHTML =
                 '<div class="pdetail-image">' +
-                    '<img id="pp-main-img" src="' + galleryImages[0] + '" alt="' + p.name + ' - Maison Ghali">' +
+                    '<img id="pp-main-img" src="' + galleryImages[0] + '" alt="' + p.name + ' - Maison Ghali" onclick="openLightbox(' + JSON.stringify(galleryImages) + ', 0)" style="cursor:pointer">' +
                     thumbsHtml +
                 '</div>' +
                 '<div class="pdetail-info">' +
