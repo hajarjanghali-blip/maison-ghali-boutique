@@ -1875,6 +1875,13 @@ footer {
 .dash-table tr:last-child td { border-bottom: none; }
 .dash-table td.up { color: var(--gold); }
 .dash-table td.down { color: #e74c3c; }
+.dash-row-new {
+    animation: dashFlash 4s ease-out;
+}
+@keyframes dashFlash {
+    0% { background: rgba(197, 168, 128, 0.25); }
+    100% { background: transparent; }
+}
 .dash-product-cell {
     display: flex;
     align-items: center;

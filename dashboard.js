@@ -5,6 +5,7 @@ if (localStorage.getItem("dashAuth") !== "true") {
 
 /* ===== API ===== */
 const API = "";
+let lastOrderId = 0;
 
 async function fetchJSON(url) {
     try {
@@ -127,9 +128,16 @@ async function loadData() {
 
     // Orders table
     const ordersTbody = document.getElementById("table-orders");
-    if (latestOrders) {
+    if (latestOrders && latestOrders.length > 0) {
+        const maxId = Math.max(...latestOrders.map(o => o.id));
+        const newOrdersArrived = lastOrderId > 0 && maxId > lastOrderId;
+        if (newOrdersArrived) {
+            playNotifSound();
+        }
+        const prevMax = lastOrderId;
+        lastOrderId = maxId;
         ordersTbody.innerHTML = latestOrders.map(o =>
-            `<tr>
+            `<tr${newOrdersArrived && o.id > prevMax ? ' class="dash-row-new"' : ''}>
                 <td><strong>#${o.id}</strong></td>
                 <td>${o.prenom} ${o.nom}</td>
                 <td>${o.product_name}</td>
@@ -138,6 +146,9 @@ async function loadData() {
                 <td><span class="dash-status status-delivered">Confirmée</span></td>
             </tr>`
         ).join("");
+        if (newOrdersArrived) {
+            setTimeout(() => document.querySelectorAll('.dash-row-new').forEach(r => r.classList.remove('dash-row-new')), 4000);
+        }
     }
 
     // Init charts
@@ -294,6 +305,30 @@ function toggleSidebar() {
 document.getElementById("dash-date").textContent = new Date().toLocaleDateString("fr-FR", {
     weekday: "long", day: "numeric", month: "long", year: "numeric"
 });
+
+/* ===== NOTIFICATION SONORE ===== */
+function playNotifSound() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 880;
+        osc.type = "sine";
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.4);
+        setTimeout(() => ctx.close(), 500);
+    } catch (e) { /* audio pas disponible */ }
+}
+
+/* ===== AUTO-REFRESH ===== */
+setInterval(loadData, 15000);
+
+/* ===== DASHBOARD TITLE ===== */
+document.title = "Maison Ghali - Tableau de Bord";
 
 /* ===== INIT ===== */
 loadData();
