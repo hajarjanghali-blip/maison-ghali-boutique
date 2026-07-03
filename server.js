@@ -17,6 +17,7 @@ app.use((req, res, next) => {
 app.use(express.static(__dirname));
 
 /* ===== BDD ===== */
+// Nettoyer la base au démarrage (Render Free)
 const db = new Database(path.join(__dirname, "maison-ghali.db"));
 db.pragma("journal_mode = WAL");
 
@@ -95,7 +96,7 @@ app.get("/api/stats", (req, res) => {
   const totalOrders = db.prepare("SELECT COUNT(*) as count FROM orders").get();
   const totalProducts = db.prepare("SELECT COUNT(DISTINCT product_id) as count FROM orders").get();
   const todayVisits = db.prepare("SELECT COALESCE(SUM(count),0) as total FROM visits").get();
-  const productsCount = 14;
+    const productsCount = 0;
 
   res.json({
     revenue: totalRevenue.total,
