@@ -4,7 +4,7 @@ if (localStorage.getItem("dashAuth") !== "true") {
 }
 
 /* ===== API ===== */
-const API = "http://localhost:3000";
+const API = "";
 
 async function fetchJSON(url) {
     try {
