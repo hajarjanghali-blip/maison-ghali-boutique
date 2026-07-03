@@ -230,6 +230,51 @@ app.get("/api/traffic/sources", (req, res) => {
   ]);
 });
 
+// Flux Facebook Catalog (XML)
+const fbProducts = require("./products-data.js").products || [];
+app.get("/feed/facebook.xml", (req, res) => {
+  const products = fbProducts;
+  const baseUrl = "https://maison-ghali.onrender.com";
+  const items = products.map(p => {
+    const priceMAD = (p.price * 10.83).toFixed(2);
+    const gallery = p.gallery || [p.image];
+    const additionalImages = gallery.slice(1).map(img => `<g:additional_image_link>${escapeXml(img)}</g:additional_image_link>`).join("\n      ");
+    return `    <item>
+      <g:id>${p.id}</g:id>
+      <g:title>${escapeXml(p.name)}</g:title>
+      <g:description>${escapeXml((p.desc || "").replace(/&agrave;/g, "à").replace(/&eacute;/g, "é").replace(/&egrave;/g, "è").replace(/&ecirc;/g, "ê").replace(/&acirc;/g, "â").replace(/&icirc;/g, "î").replace(/&ocirc;/g, "ô").replace(/&ucirc;/g, "û").replace(/&auml;/g, "ä").replace(/&euml;/g, "ë").replace(/&ouml;/g, "ö").replace(/&uuml;/g, "ü").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'"))}</g:description>
+      <g:link>${baseUrl}/product.html?id=${p.id}</g:link>
+      <g:image_link>${escapeXml(p.image)}</g:image_link>
+      ${additionalImages ? additionalImages + "\n      " : ""}<g:price>${priceMAD} MAD</g:price>
+      <g:sale_price>${priceMAD} MAD</g:sale_price>
+      <g:availability>in stock</g:availability>
+      <g:brand>Maison Ghali</g:brand>
+      <g:condition>new</g:condition>
+      <g:google_product_category>Accessories &gt; Jewelry &gt; Bracelets</g:google_product_category>
+      <g:product_type>Accessoires &gt; Bijoux &gt; Bracelets</g:product_type>
+      <g:quantity>100</g:quantity>
+      <g:custom_label_0>Bracelets Acier</g:custom_label_0>
+      <g:custom_label_1>149 DHS</g:custom_label_1>
+    </item>`;
+  }).join("\n");
+
+  res.set("Content-Type", "application/xml; charset=UTF-8");
+  res.send(`<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+  <channel>
+    <title>Maison Ghali - Catalogue Produits</title>
+    <link>${baseUrl}</link>
+    <description>Catalogue officiel Maison Ghali - Bracelets acier de luxe</description>
+${items}
+  </channel>
+</rss>`);
+});
+
+function escapeXml(s) {
+  if (typeof s !== "string") return "";
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
 app.listen(PORT, () => {
   console.log(`Serveur Maison Ghali démarré sur http://localhost:${PORT}`);
 });

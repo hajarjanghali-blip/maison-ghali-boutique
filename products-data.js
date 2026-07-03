@@ -5,3 +5,4 @@ const products = [
     { id: 4, name: "Bracelet Acier Luxe", category: "bracelets", price: 13.76, rating: 4, image: "https://res.cloudinary.com/dx5d98buj/image/upload/v1783088695/1000004835_v4bvtl.png", buyers: [], desc: "Bracelet en acier de luxe au design raffin&eacute;. Finition premium, &eacute;clat brillant. Un choix d'exception pour homme &eacute;l&eacute;gant. 149 DHS." },
     { id: 5, name: "Bracelet Acier Premium", category: "bracelets", price: 13.76, rating: 4, image: "https://res.cloudinary.com/dx5d98buj/image/upload/v1783088649/1000004833_aeknnw.png", buyers: [], desc: "Bracelet en acier premium au design &eacute;pur&eacute;. Maille fine et &eacute;l&eacute;gante, fermeture s&eacute;curis&eacute;e. Le choix parfait pour un homme distingu&eacute;. 149 DHS." },
 ];
+if (typeof module !== "undefined") module.exports = { products };
