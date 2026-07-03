@@ -432,19 +432,6 @@
             document.getElementById('main-nav').classList.remove('open');
         }
     </script>
-    <script>
-        // Observer les cards produits existantes après render
-        const ro = new MutationObserver(() => {
-            document.querySelectorAll('.fade-in-up:not(.visible)').forEach(el => {
-                if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
-            });
-        });
-        ro.observe(document.getElementById('products-grid'), { childList: true, subtree: true });
-        // Scroll reveal observer
-        const srObserver = new IntersectionObserver((entries) => {
-            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.fade-in-up').forEach(el => srObserver.observe(el));
-    </script>
+
 </body>
 </html>

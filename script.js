@@ -29,6 +29,20 @@ function renderProducts(filter = "all") {
             </div>
         </div>
     `).join("");
+    revealCards();
+}
+
+/* ===== RÉVÉLATION AU SCROLL ===== */
+let srObserver = null;
+function revealCards() {
+    document.querySelectorAll('.fade-in-up:not(.visible)').forEach(el => {
+        if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
+    });
+    if (srObserver) srObserver.disconnect();
+    srObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in-up:not(.visible)').forEach(el => srObserver.observe(el));
 }
 
 /* ===== FORMAT PRIX ===== */
