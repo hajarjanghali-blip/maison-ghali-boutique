@@ -138,7 +138,7 @@ app.get("/api/stats", (req, res) => {
   const totalOrders = db.prepare("SELECT COUNT(*) as count FROM orders").get();
   const totalProducts = db.prepare("SELECT COUNT(DISTINCT product_id) as count FROM orders").get();
   const todayVisits = db.prepare("SELECT COALESCE(SUM(count),0) as total FROM visits").get();
-    const productsCount = 6;
+    const productsCount = 7;
 
   res.json({
     revenue: totalRevenue.total,
