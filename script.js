@@ -21,6 +21,7 @@ function renderProducts(filter = "all") {
                 <h3 onclick="location.href='product.html?id=${p.id}'">${p.name}</h3>
                 <div class="product-rating">${renderStars(p.rating)}</div>
                 <div class="price" data-base="${p.price}">${formatPrice(p.price)}</div>
+                <div class="product-desc-short">${p.desc.replace(/<[^>]*>/g, '').split('.')[0]}.</div>
                 <div class="product-buyers"><i class="fa-solid fa-user-check"></i> ${p.buyers.slice(0, 3).join(", ")}${p.buyers.length > 3 ? " +" + (p.buyers.length - 3) : ""}</div>
                 <div class="product-actions">
                     <button class="btn-add-cart" onclick="addToCart(${p.id})">Ajouter au Panier</button>
@@ -52,7 +53,7 @@ function formatPrice(amount) {
     if (currentCurrency === "EUR") return converted.toFixed(2) + " €";
     if (currentCurrency === "USD") return "$" + converted.toFixed(2);
     if (currentCurrency === "GBP") return "£" + converted.toFixed(2);
-    if (currentCurrency === "MAD") return converted.toFixed(2) + " Dh";
+    if (currentCurrency === "MAD") return converted.toFixed(2) + " Dhs";
     return converted.toFixed(2) + " €";
 }
 
