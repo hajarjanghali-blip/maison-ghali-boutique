@@ -152,15 +152,16 @@ function toggleCart() {
 const API = "";
 
 async function submitOrderToBackend(orderData) {
-    try {
-        await fetch(API + "/api/order", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(orderData)
-        });
-    } catch (e) {
-        console.warn("Backend indisponible, commande enregistrée localement");
+    const res = await fetch(API + "/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData)
+    });
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error("Serveur a répondu " + res.status + ": " + text);
     }
+    return res.json();
 }
 
 let checkoutMode = "single";
@@ -169,6 +170,9 @@ function checkout() {
     if (cart.length === 0) return;
     checkoutMode = "cart";
     const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    if (typeof fbq === 'function') {
+        fbq('track', 'InitiateCheckout', { value: total, currency: 'MAD', num_items: cart.reduce((s, i) => s + i.qty, 0) });
+    }
     document.getElementById("checkout-product-summary").innerHTML = cart.map(item => `
         <div class="checkout-cart-item">
             <img src="${item.image}" alt="${item.name}">
@@ -283,6 +287,10 @@ let pdetailColor = null;
 let pdetailId = null;
 
 function openProductDetail(id) {
+    if (typeof fbq === 'function') {
+        const p = products.find(x => x.id === id);
+        if (p) fbq('track', 'ViewContent', { content_name: p.name, content_ids: [p.id], content_type: 'product', value: p.price, currency: 'MAD' });
+    }
     const p = products.find(x => x.id === id);
     if (!p) return;
     pdetailId = id;
@@ -406,6 +414,9 @@ function openCheckout(id, qty, color) {
     checkoutColor = color || null;
     const img = color && product.colors && product.colors[color] ? product.colors[color] : product.image;
     const total = product.price * checkoutQty;
+    if (typeof fbq === 'function') {
+        fbq('track', 'InitiateCheckout', { value: total, currency: 'MAD', content_name: product.name, content_ids: [product.id], content_type: 'product' });
+    }
     document.getElementById("checkout-product-summary").innerHTML = `
         <img src="${img}" alt="${product.name}">
         <div>
@@ -426,7 +437,7 @@ function closeCheckout(event) {
     checkoutProductId = null;
 }
 
-function submitOrder(event) {
+async function submitOrder(event) {
     event.preventDefault();
 
     const prenom = document.getElementById("field-prenom").value.trim();
@@ -437,39 +448,51 @@ function submitOrder(event) {
 
     if (!prenom || !nom || !telephone || !adresse || !ville) return;
 
-    if (checkoutMode === "cart") {
-        const items = cart.map(item => ({
-            prenom, nom, telephone, adresse, ville,
-            product_id: item.id,
-            product_name: item.name + (item.variant ? " (" + item.variant + ")" : ""),
-            product_price: item.price,
-            quantite: item.qty
-        }));
-        items.forEach(item => submitOrderToBackend(item));
-        if (typeof fbq === 'function') {
-            fbq('track', 'Purchase', { value: cart.reduce((s, i) => s + i.price * i.qty, 0), currency: 'MAD' });
+    const confirmBtn = document.querySelector(".btn-confirm-order");
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = "Envoi en cours...";
+
+    try {
+        if (checkoutMode === "cart") {
+            const items = cart.map(item => ({
+                prenom, nom, telephone, adresse, ville,
+                product_id: item.id,
+                product_name: item.name + (item.variant ? " (" + item.variant + ")" : ""),
+                product_price: item.price,
+                quantite: item.qty
+            }));
+            await Promise.all(items.map(item => submitOrderToBackend(item)));
+            if (typeof fbq === 'function') {
+                fbq('track', 'Purchase', { value: cart.reduce((s, i) => s + i.price * i.qty, 0), currency: 'MAD' });
+            }
+            cart = [];
+            updateCart();
+            toggleCart();
+            closeCheckout();
+            showToast(`Commande confirmée ! Merci ${prenom}.`);
+        } else {
+            const product = products.find(p => p.id === checkoutProductId);
+            if (!product) return;
+            const nameSuffix = checkoutColor ? " (" + checkoutColor + ")" : "";
+            await submitOrderToBackend({
+                prenom, nom, telephone, adresse, ville,
+                product_id: product.id,
+                product_name: product.name + nameSuffix,
+                product_price: product.price,
+                quantite: checkoutQty
+            });
+            if (typeof fbq === 'function') {
+                fbq('track', 'Purchase', { value: product.price * checkoutQty, currency: 'MAD' });
+            }
+            closeCheckout();
+            showToast(`Commande confirmée ! Merci ${prenom}.`);
         }
-        cart = [];
-        updateCart();
-        toggleCart();
-        closeCheckout();
-        setTimeout(() => showToast(`Commande confirmée ! Merci ${prenom}.`), 300);
-    } else {
-        const product = products.find(p => p.id === checkoutProductId);
-        if (!product) return;
-        const nameSuffix = checkoutColor ? " (" + checkoutColor + ")" : "";
-        submitOrderToBackend({
-            prenom, nom, telephone, adresse, ville,
-            product_id: product.id,
-            product_name: product.name + nameSuffix,
-            product_price: product.price,
-            quantite: checkoutQty
-        });
-        if (typeof fbq === 'function') {
-            fbq('track', 'Purchase', { value: product.price * checkoutQty, currency: 'MAD' });
-        }
-        closeCheckout();
-        setTimeout(() => showToast(`Commande confirmée ! Merci ${prenom}.`), 300);
+    } catch (e) {
+        console.error("Échec commande:", e);
+        showToast("Erreur : impossible de soumettre la commande. Veuillez nous contacter via WhatsApp.");
+    } finally {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = "Confirmer la Commande";
     }
 }
 

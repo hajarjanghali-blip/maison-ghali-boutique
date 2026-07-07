@@ -138,7 +138,7 @@ app.get("/api/stats", (req, res) => {
   const totalOrders = db.prepare("SELECT COUNT(*) as count FROM orders").get();
   const totalProducts = db.prepare("SELECT COUNT(DISTINCT product_id) as count FROM orders").get();
   const todayVisits = db.prepare("SELECT COALESCE(SUM(count),0) as total FROM visits").get();
-    const productsCount = 8;
+    const productsCount = 9;
 
   res.json({
     revenue: totalRevenue.total,
@@ -232,6 +232,14 @@ app.get("/api/traffic/sources", (req, res) => {
 
 // Flux Facebook Catalog (XML)
 const fbProducts = require("./products-data.js").products || [];
+
+const CATEGORY_MAP = {
+  bracelets: "Accessories > Jewelry > Bracelets",
+  colliers:  "Accessories > Jewelry > Necklaces",
+  accessoires: "Accessories > Fashion Accessories",
+  luxe: "Accessories > Jewelry"
+};
+
 app.get("/feed/facebook.xml", (req, res) => {
   const products = fbProducts;
   const baseUrl = "https://maison-ghali.onrender.com";
@@ -239,6 +247,7 @@ app.get("/feed/facebook.xml", (req, res) => {
     const priceMAD = (p.price * 10.83).toFixed(2);
     const gallery = p.gallery || [p.image];
     const additionalImages = gallery.slice(1).map(img => `<g:additional_image_link>${escapeXml(img)}</g:additional_image_link>`).join("\n      ");
+    const googleCat = CATEGORY_MAP[p.category] || "Accessories > Jewelry";
     return `    <item>
       <g:id>${p.id}</g:id>
       <g:title>${escapeXml(p.name)}</g:title>
@@ -250,11 +259,11 @@ app.get("/feed/facebook.xml", (req, res) => {
       <g:availability>in stock</g:availability>
       <g:brand>Maison Ghali</g:brand>
       <g:condition>new</g:condition>
-      <g:google_product_category>Accessories &gt; Jewelry &gt; Bracelets</g:google_product_category>
-      <g:product_type>Accessoires &gt; Bijoux &gt; Bracelets</g:product_type>
+      <g:google_product_category>${escapeXml(googleCat)}</g:google_product_category>
+      <g:product_type>${escapeXml(googleCat)}</g:product_type>
       <g:quantity>100</g:quantity>
-      <g:custom_label_0>Bracelets Acier</g:custom_label_0>
-      <g:custom_label_1>149 DHS</g:custom_label_1>
+      <g:custom_label_0>${escapeXml(p.category)}</g:custom_label_0>
+      <g:custom_label_1>${priceMAD} DHS</g:custom_label_1>
     </item>`;
   }).join("\n");
 
