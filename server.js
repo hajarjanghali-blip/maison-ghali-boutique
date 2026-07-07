@@ -26,12 +26,16 @@ db.pragma("journal_mode = WAL");
 // Restaurer les commandes depuis le backup JSON si la DB est vide
 const fs = require("fs");
 const BACKUP_PATH = process.env.BACKUP_PATH || (isRender ? "/tmp/orders-backup.json" : path.join(__dirname, "orders-backup.json"));
+const COMMITTED_BACKUP = path.join(__dirname, "orders-backup.json");
 function restoreFromBackup() {
     try {
-        if (!fs.existsSync(BACKUP_PATH)) return;
         const count = db.prepare("SELECT COUNT(*) as c FROM orders").get().c;
         if (count > 0) return;
-        const data = JSON.parse(fs.readFileSync(BACKUP_PATH, "utf8"));
+        let backupFile = null;
+        if (fs.existsSync(BACKUP_PATH)) backupFile = BACKUP_PATH;
+        else if (fs.existsSync(COMMITTED_BACKUP)) backupFile = COMMITTED_BACKUP;
+        if (!backupFile) return;
+        const data = JSON.parse(fs.readFileSync(backupFile, "utf8"));
         if (!data.length) return;
         const insert = db.prepare(`INSERT INTO orders (prenom, nom, telephone, adresse, ville, product_id, product_name, product_price, quantite, total, date) VALUES (?,?,?,?,?,?,?,?,?,?,?)`);
         const tx = db.transaction(() => {
@@ -40,7 +44,8 @@ function restoreFromBackup() {
             }
         });
         tx();
-        console.log(`Restauré ${data.length} commandes depuis orders-backup.json`);
+        console.log(`Restauré ${data.length} commandes depuis ${backupFile}`);
+        fs.writeFileSync(BACKUP_PATH, JSON.stringify(data, null, 2));
     } catch (e) {
         console.warn("Erreur restauration backup:", e.message);
     }
