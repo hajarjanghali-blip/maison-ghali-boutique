@@ -2,6 +2,7 @@ const express = require("express");
 const Database = require("better-sqlite3");
 const cors = require("cors");
 const path = require("path");
+const twilio = require("twilio");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -59,6 +60,7 @@ db.exec(`
     product_price REAL NOT NULL,
     quantite INTEGER NOT NULL DEFAULT 1,
     total REAL NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
     date TEXT NOT NULL DEFAULT (datetime('now','+1 hour'))
   );
 
@@ -76,8 +78,8 @@ db.exec(`
 `);
 
 const insertOrder = db.prepare(`
-  INSERT INTO orders (prenom, nom, telephone, adresse, ville, product_id, product_name, product_price, quantite, total)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  INSERT INTO orders (prenom, nom, telephone, adresse, ville, product_id, product_name, product_price, quantite, total, status)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
 `);
 
 const upsertVisit = db.prepare(`
@@ -89,6 +91,35 @@ const upsertPageView = db.prepare(`
   INSERT INTO page_views (date, count) VALUES (date('now'), 1)
   ON CONFLICT(date) DO UPDATE SET count = count + 1
 `);
+
+/* ===== TWILIO WHATSAPP ===== */
+const twilioClient = process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN
+    ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
+    : null;
+
+async function notifyWhatsApp(order) {
+    if (!twilioClient) {
+        console.log("WhatsApp désactivé (TWILIO non configuré)");
+        return;
+    }
+    try {
+        const msg = `🆕 *Nouvelle commande #${order.id}* 🇲🇦\n\n` +
+            `👤 ${order.prenom} ${order.nom}\n` +
+            `📞 ${order.telephone}\n` +
+            `📍 ${order.adresse}, ${order.ville}\n` +
+            `📦 ${order.product_name} x${order.quantite}\n` +
+            `💰 ${order.total.toFixed(2)} DHS\n` +
+            `📅 ${order.date}`;
+        await twilioClient.messages.create({
+            from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER || "+14155238886"}`,
+            to: `whatsapp:${process.env.ADMIN_WHATSAPP || "+212645420457"}`,
+            body: msg
+        });
+        console.log("Notification WhatsApp envoyée pour la commande #" + order.id);
+    } catch (e) {
+        console.warn("Erreur envoi WhatsApp:", e.message);
+    }
+}
 
 /* ===== ROUTES ===== */
 
@@ -109,14 +140,34 @@ app.post("/api/order", (req, res) => {
     return res.status(400).json({ error: "Champs obligatoires manquants" });
   }
   const total = (product_price || 0) * (quantite || 1);
-  insertOrder.run(prenom, nom, telephone, adresse, ville, product_id, product_name, product_price, quantite || 1, total);
+  const info = insertOrder.run(prenom, nom, telephone, adresse, ville, product_id, product_name, product_price, quantite || 1, total);
   backupOrders();
-  res.json({ success: true });
+  const order = db.prepare("SELECT * FROM orders WHERE id = ?").get(info.lastInsertRowid);
+  if (order) notifyWhatsApp(order).catch(() => {});
+  res.json({ success: true, id: info.lastInsertRowid });
 });
 
 // Exporter toutes les commandes en JSON
 app.get("/api/orders/export", (req, res) => {
-    const all = db.prepare("SELECT * FROM orders ORDER BY date DESC").all();
+    const { status, format } = req.query;
+    let sql = "SELECT * FROM orders";
+    const params = [];
+    if (status && ["pending", "processed", "completed", "cancelled"].includes(status)) {
+      sql += " WHERE status = ?";
+      params.push(status);
+    }
+    sql += " ORDER BY date DESC";
+    const all = db.prepare(sql).all(...params);
+    if (format === "csv") {
+      const header = "id;prenom;nom;telephone;adresse;ville;product_name;quantite;total;status;date";
+      const rows = all.map(o =>
+        [o.id, o.prenom, o.nom, o.telephone, o.adresse, o.ville, o.product_name, o.quantite, o.total, o.status, o.date]
+          .map(v => `"${v}"`).join(";")
+      ).join("\n");
+      res.setHeader("Content-Type", "text/csv; charset=utf-8");
+      res.setHeader("Content-Disposition", "attachment; filename=commandes.csv");
+      return res.send("\uFEFF" + header + "\n" + rows);
+    }
     res.json(all);
 });
 
@@ -212,10 +263,34 @@ app.get("/api/products/top", (req, res) => {
 
 // Dernières commandes
 app.get("/api/orders/latest", (req, res) => {
-  const rows = db.prepare(`
-    SELECT * FROM orders ORDER BY date DESC LIMIT 15
-  `).all();
+  const statusFilter = req.query.status;
+  let sql = "SELECT * FROM orders";
+  const params = [];
+  if (statusFilter && ["pending", "processed", "completed", "cancelled"].includes(statusFilter)) {
+    sql += " WHERE status = ?";
+    params.push(statusFilter);
+  }
+  sql += " ORDER BY date DESC LIMIT 50";
+  const rows = db.prepare(sql).all(...params);
   res.json(rows);
+});
+
+// Compter les commandes non traitées
+app.get("/api/orders/pending-count", (req, res) => {
+  const row = db.prepare("SELECT COUNT(*) as count FROM orders WHERE status = 'pending'").get();
+  res.json({ count: row.count });
+});
+
+// Mettre à jour le statut d'une commande
+app.patch("/api/orders/:id/status", (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  if (!["pending", "processed", "completed", "cancelled"].includes(status)) {
+    return res.status(400).json({ error: "Statut invalide" });
+  }
+  db.prepare("UPDATE orders SET status = ? WHERE id = ?").run(status, id);
+  backupOrders();
+  res.json({ success: true });
 });
 
 // Sources de trafic (mock enrichi depuis les vrais visites)

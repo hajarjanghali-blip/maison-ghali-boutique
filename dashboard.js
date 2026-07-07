@@ -1,11 +1,12 @@
-/* ===== PROTECTION ===== */
 if (localStorage.getItem("dashAuth") !== "true") {
     window.location.href = "admin.html";
 }
 
-/* ===== API ===== */
 const API = "";
 let lastOrderId = 0;
+let dailyData = [];
+let orderFilterStatus = "";
+let orderSearchQuery = "";
 
 async function fetchJSON(url) {
     try {
@@ -15,10 +16,6 @@ async function fetchJSON(url) {
         return null;
     }
 }
-
-/* ===== DONNÉES ===== */
-let dailyData = [];
-let productsSold = {};
 
 function fillMissingDates(data, days = 30) {
     const map = {};
@@ -46,17 +43,17 @@ async function loadData() {
     if (loadingData) return;
     loadingData = true;
     try {
-    const [stats, revenueDaily, trafficDaily, periods, sources, topProducts, latestOrders] = await Promise.all([
+    const [stats, revenueDaily, trafficDaily, periods, sources, topProducts, latestOrders, pendingCount] = await Promise.all([
         fetchJSON(API + "/api/stats"),
         fetchJSON(API + "/api/revenue/daily"),
         fetchJSON(API + "/api/traffic/daily"),
         fetchJSON(API + "/api/stats/periods"),
         fetchJSON(API + "/api/traffic/sources"),
         fetchJSON(API + "/api/products/top"),
-        fetchJSON(API + "/api/orders/latest")
+        fetchJSON(API + "/api/orders/latest" + (orderFilterStatus ? "?status=" + orderFilterStatus : "")),
+        fetchJSON(API + "/api/orders/pending-count")
     ]);
 
-    // Stats cards
     if (stats) {
         document.getElementById("stat-revenue").textContent = parseFloat(stats.revenue).toFixed(2) + " €";
         document.getElementById("stat-orders").textContent = stats.orders;
@@ -64,10 +61,18 @@ async function loadData() {
         document.getElementById("stat-visitors").textContent = stats.visitors;
     }
 
-    // Revenue daily
+    if (pendingCount) {
+        const badge = document.getElementById("pending-badge");
+        if (pendingCount.count > 0) {
+            badge.textContent = pendingCount.count;
+            badge.style.display = "inline";
+        } else {
+            badge.style.display = "none";
+        }
+    }
+
     dailyData = fillMissingDates(revenueDaily || []);
 
-    // Traffic
     if (trafficDaily) {
         const visitsMap = {};
         (trafficDaily.visits || []).forEach(v => { visitsMap[v.date] = (visitsMap[v.date] || 0) + v.visits; });
@@ -81,7 +86,6 @@ async function loadData() {
         });
     }
 
-    // Sales table
     const salesTbody = document.getElementById("table-sales");
     if (periods) {
         const rows = [
@@ -102,7 +106,6 @@ async function loadData() {
         }).join("");
     }
 
-    // Traffic sources
     const trafficTbody = document.getElementById("table-traffic");
     if (sources) {
         trafficTbody.innerHTML = sources.map(s =>
@@ -110,7 +113,6 @@ async function loadData() {
         ).join("");
     }
 
-    // Products table
     const productsTbody = document.getElementById("table-products");
     const topMap = {};
     if (topProducts) {
@@ -130,7 +132,6 @@ async function loadData() {
         </tr>`;
     }).join("");
 
-    // Orders table
     const ordersTbody = document.getElementById("table-orders");
     if (latestOrders && latestOrders.length > 0) {
         const maxId = Math.max(...latestOrders.map(o => o.id));
@@ -140,31 +141,136 @@ async function loadData() {
         }
         const prevMax = lastOrderId;
         lastOrderId = maxId;
-        ordersTbody.innerHTML = latestOrders.map(o =>
-            `<tr${newOrdersArrived && o.id > prevMax ? ' class="dash-row-new"' : ''}>
-                <td><strong>#${o.id}</strong></td>
-                <td>${o.prenom} ${o.nom}</td>
-                <td>${o.product_name}</td>
-                <td>${parseFloat(o.total).toFixed(2)} €</td>
-                <td>${new Date(o.date + 'Z').toLocaleDateString("fr-FR")}</td>
-                <td><span class="dash-status status-delivered">Confirmée</span></td>
-            </tr>`
-        ).join("");
+
+        let html = latestOrders
+            .filter(o => !orderSearchQuery || o.prenom.toLowerCase().includes(orderSearchQuery) || o.nom.toLowerCase().includes(orderSearchQuery) || o.telephone.includes(orderSearchQuery) || o.product_name.toLowerCase().includes(orderSearchQuery))
+            .map(o => {
+                const statusLabels = { pending: "En attente", processed: "Traitée", completed: "Terminée", cancelled: "Annulée" };
+                const isNew = newOrdersArrived && o.id > prevMax;
+                return `<tr${isNew ? ' class="dash-row-new"' : ''}>
+                    <td><strong>#${o.id}</strong></td>
+                    <td>${o.prenom} ${o.nom}</td>
+                    <td>${o.telephone}</td>
+                    <td>${o.product_name}</td>
+                    <td>${o.quantite}</td>
+                    <td>${parseFloat(o.total).toFixed(2)} DHS</td>
+                    <td>${new Date(o.date + 'Z').toLocaleDateString("fr-FR")}</td>
+                    <td><span class="dash-status status-${o.status}">${statusLabels[o.status] || o.status}</span></td>
+                    <td>
+                        <button class="btn-status" onclick="showOrderDetail(${o.id}, '${o.prenom}', '${o.nom}', '${o.telephone}', '${o.adresse}', '${o.ville}', '${o.product_name}', ${o.quantite}, ${o.total}, '${o.status}', '${o.date}')" title="Détail"><i class="fa-solid fa-eye"></i></button>
+                    </td>
+                </tr>`;
+            }).join("");
+
+        if (!html) html = '<tr><td colspan="9" style="text-align:center;padding:30px;color:#999;">Aucune commande trouvée</td></tr>';
+        ordersTbody.innerHTML = html;
+
         if (newOrdersArrived) {
             setTimeout(() => document.querySelectorAll('.dash-row-new').forEach(r => r.classList.remove('dash-row-new')), 4000);
         }
+    } else {
+        ordersTbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:30px;color:#999;">Aucune commande pour le moment</td></tr>';
     }
 
-    // Init charts
     try { initCharts(); } catch (e) { console.warn("Chart error:", e); }
     } finally { loadingData = false; }
 }
 
-function calculateStats() {
-    // Remplacé par loadData()
+function filterOrders() {
+    orderSearchQuery = document.getElementById("order-search").value.trim().toLowerCase();
+    loadData();
 }
 
-/* ===== CHARTES ===== */
+function setOrderFilter(btn) {
+    document.querySelectorAll(".order-filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    orderFilterStatus = btn.dataset.status;
+    loadData();
+}
+
+function showOrderDetail(id, prenom, nom, telephone, adresse, ville, productName, quantite, total, status, date) {
+    const statusLabels = { pending: "En attente", processed: "Traitée", completed: "Terminée", cancelled: "Annulée" };
+    const statusBadges = { pending: "status-pending", processed: "status-processed", completed: "status-completed", cancelled: "status-cancelled" };
+    document.getElementById("order-detail-content").innerHTML = `
+        <div style="text-align:center;margin-bottom:16px;">
+            <span class="dash-status ${statusBadges[status] || 'status-pending'}" style="font-size:14px;padding:6px 16px;">${statusLabels[status] || status}</span>
+        </div>
+        <div class="order-detail-grid">
+            <div class="order-detail-field">
+                <label>Commande</label>
+                <span>#${id}</span>
+            </div>
+            <div class="order-detail-field">
+                <label>Date</label>
+                <span>${new Date(date + 'Z').toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
+            </div>
+            <div class="order-detail-field">
+                <label>Prénom</label>
+                <span>${prenom}</span>
+            </div>
+            <div class="order-detail-field">
+                <label>Nom</label>
+                <span>${nom}</span>
+            </div>
+            <div class="order-detail-field">
+                <label>Téléphone</label>
+                <span><a href="https://wa.me/212${telephone.replace(/[^0-9]/g, '')}" target="_blank" style="color:#25D366;text-decoration:none;">${telephone} <i class="fa-brands fa-whatsapp"></i></a></span>
+            </div>
+            <div class="order-detail-field">
+                <label>Ville</label>
+                <span>${ville}</span>
+            </div>
+            <div class="order-detail-field" style="grid-column:1/-1;">
+                <label>Adresse</label>
+                <span>${adresse}</span>
+            </div>
+            <div class="order-detail-field">
+                <label>Produit</label>
+                <span>${productName}</span>
+            </div>
+            <div class="order-detail-field">
+                <label>Quantité</label>
+                <span>${quantite}</span>
+            </div>
+            <div class="order-detail-field" style="grid-column:1/-1;">
+                <label>Total</label>
+                <span style="font-size:18px;color:var(--gold);">${parseFloat(total).toFixed(2)} DHS</span>
+            </div>
+        </div>
+        <div class="order-detail-actions">
+            ${status !== 'processed' ? `<button class="btn-process" onclick="updateOrderStatus(${id}, 'processed');closeOrderDetail();"><i class="fa-solid fa-check"></i> Marquer traitée</button>` : ''}
+            ${status !== 'completed' ? `<button class="btn-done" onclick="updateOrderStatus(${id}, 'completed');closeOrderDetail();"><i class="fa-solid fa-check-double"></i> Marquer terminée</button>` : ''}
+            ${status !== 'cancelled' ? `<button class="btn-cancel" onclick="if(confirm('Annuler cette commande ?')){updateOrderStatus(${id}, 'cancelled');closeOrderDetail();}"><i class="fa-solid fa-times"></i> Annuler</button>` : ''}
+            <a href="https://wa.me/212${telephone.replace(/[^0-9]/g, '')}" target="_blank" class="btn-process" style="text-align:center;text-decoration:none;background:#25D366;color:#fff;"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+        </div>
+    `;
+    document.getElementById("order-detail-modal").classList.add("open");
+    document.body.style.overflow = "hidden";
+}
+
+function closeOrderDetail() {
+    document.getElementById("order-detail-modal").classList.remove("open");
+    document.body.style.overflow = "";
+}
+
+async function updateOrderStatus(id, status) {
+    try {
+        const res = await fetch(API + "/api/orders/" + id + "/status", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status })
+        });
+        if (res.ok) {
+            showToast("Commande #" + id + " marquée comme " + status);
+            loadData();
+        }
+    } catch (e) {
+        console.error("Erreur mise à jour statut:", e);
+    }
+}
+
+function calculateStats() {}
+
 const chartDefaults = {
     responsive: true,
     maintainAspectRatio: false,
@@ -254,7 +360,6 @@ function createDoughnutChart(id, labels, data, colors) {
     });
 }
 
-/* ===== INITIALISER LES GRAPHIQUES ===== */
 function initCharts() {
     const labels = dailyData.map(d => d.date);
     const revenues = dailyData.map(d => d.revenue);
@@ -280,10 +385,6 @@ function initCharts() {
     createBarChart("chart-top-products", top5.map(p => p.name.length > 15 ? p.name.slice(0, 15) + "..." : p.name), top5.map(p => p.buyers.length), "Acheteurs", "#f39c12");
 }
 
-/* ===== TABLEAUX ===== */
-// Remplacé par loadData()
-
-/* ===== NAVIGATION LATÉRALE ===== */
 document.querySelectorAll(".dash-nav-item").forEach(item => {
     item.addEventListener("click", function(e) {
         e.preventDefault();
@@ -295,40 +396,36 @@ document.querySelectorAll(".dash-nav-item").forEach(item => {
     });
 });
 
-/* ===== DÉCONNEXION ===== */
 function logout() {
     localStorage.removeItem("dashAuth");
     window.location.href = "admin.html";
 }
 
-/* ===== TOGGLE SIDEBAR ===== */
 function toggleSidebar() {
     document.getElementById("dash-sidebar").classList.toggle("collapsed");
 }
 
-/* ===== DATE ===== */
 document.getElementById("dash-date").textContent = new Date().toLocaleDateString("fr-FR", {
     weekday: "long", day: "numeric", month: "long", year: "numeric"
 });
 
-/* ===== EXPORT JSON ===== */
 async function exportOrders() {
+    const url = API + "/api/orders/export" + (orderFilterStatus ? "?status=" + orderFilterStatus : "");
     try {
-        const data = await fetchJSON(API + "/api/orders/export");
-        if (!data) { alert("Aucune commande à exporter"); return; }
+        const data = await fetchJSON(url);
+        if (!data || data.length === 0) { alert("Aucune commande à exporter"); return; }
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
+        const urlBlob = URL.createObjectURL(blob);
         const a = document.createElement("a");
-        a.href = url;
+        a.href = urlBlob;
         a.download = "commandes-maison-ghali-" + new Date().toISOString().slice(0, 10) + ".json";
         a.click();
-        URL.revokeObjectURL(url);
+        URL.revokeObjectURL(urlBlob);
     } catch (e) {
         alert("Erreur d'export : " + e.message);
     }
 }
 
-/* ===== NOTIFICATION SONORE ===== */
 function playNotifSound() {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -343,14 +440,23 @@ function playNotifSound() {
         osc.start(ctx.currentTime);
         osc.stop(ctx.currentTime + 0.4);
         setTimeout(() => ctx.close(), 500);
-    } catch (e) { /* audio pas disponible */ }
+    } catch (e) {}
 }
 
-/* ===== AUTO-REFRESH ===== */
+function showToast(msg) {
+    let toast = document.querySelector(".dash-toast");
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.className = "dash-toast";
+        toast.style.cssText = "position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:14px 28px;border-radius:10px;font-size:14px;z-index:9999;opacity:0;transition:0.3s;box-shadow:0 10px 30px rgba(0,0,0,0.2);";
+        document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.opacity = "1";
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => toast.style.opacity = "0", 2500);
+}
+
 setInterval(loadData, 15000);
-
-/* ===== DASHBOARD TITLE ===== */
 document.title = "Maison Ghali - Tableau de Bord";
-
-/* ===== INIT ===== */
 loadData();

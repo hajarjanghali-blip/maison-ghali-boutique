@@ -18,7 +18,7 @@
             <a href="#" class="dash-nav-item" data-section="sales"><i class="fa-solid fa-euro-sign"></i> Ventes</a>
             <a href="#" class="dash-nav-item" data-section="traffic"><i class="fa-solid fa-chart-line"></i> Trafic</a>
             <a href="#" class="dash-nav-item" data-section="products"><i class="fa-solid fa-box"></i> Produits</a>
-            <a href="#" class="dash-nav-item" data-section="orders"><i class="fa-solid fa-truck"></i> Commandes</a>
+            <a href="#" class="dash-nav-item" data-section="orders"><i class="fa-solid fa-truck"></i> Commandes <span id="pending-badge" class="dash-badge" style="display:none;">0</span></a>
         </nav>
         <div class="dash-sidebar-footer">
             <a href="index.html" class="dash-back-link"><i class="fa-solid fa-arrow-left"></i> Retour au site</a>
@@ -173,19 +173,34 @@
         <!-- SECTION COMMANDES -->
         <section id="section-orders" class="dash-section">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
-                <h2 style="margin:0;">Derni&egrave;res Commandes</h2>
-                <button onclick="exportOrders()" class="btn-export" style="padding:10px 20px;border:1px solid var(--gold);background:transparent;color:var(--gold);border-radius:8px;cursor:pointer;font-size:13px;min-height:44px;"><i class="fa-solid fa-download"></i> Exporter JSON</button>
+                <h2 style="margin:0;">Commandes</h2>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                    <div class="order-search-wrap">
+                        <i class="fa-solid fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#999;"></i>
+                        <input type="text" id="order-search" placeholder="Rechercher..." oninput="filterOrders()" style="padding:10px 12px 10px 36px;border:2px solid #eee;border-radius:8px;font-size:13px;outline:none;width:200px;min-height:44px;">
+                    </div>
+                    <div class="order-status-filters" style="display:flex;gap:4px;">
+                        <button class="order-filter-btn active" data-status="" onclick="setOrderFilter(this)">Toutes</button>
+                        <button class="order-filter-btn" data-status="pending" onclick="setOrderFilter(this)" style="color:#e67e22;">En attente</button>
+                        <button class="order-filter-btn" data-status="processed" onclick="setOrderFilter(this)" style="color:#3498db;">Trait&eacute;es</button>
+                        <button class="order-filter-btn" data-status="completed" onclick="setOrderFilter(this)" style="color:#27ae60;">Termin&eacute;es</button>
+                    </div>
+                    <button onclick="exportOrders()" class="btn-export" style="padding:10px 20px;border:1px solid var(--gold);background:transparent;color:var(--gold);border-radius:8px;cursor:pointer;font-size:13px;min-height:44px;"><i class="fa-solid fa-download"></i> Export</button>
+                </div>
             </div>
-            <div class="dash-chart-box full-width">
-                <table class="dash-table">
+            <div class="dash-chart-box full-width" style="overflow-x:auto;">
+                <table class="dash-table" style="min-width:900px;">
                     <thead>
                         <tr>
-                            <th>Commande</th>
+                            <th style="width:50px;">#</th>
                             <th>Client</th>
+                            <th>T&eacute;l&eacute;phone</th>
                             <th>Produit</th>
+                            <th>Qt&eacute;</th>
                             <th>Montant</th>
                             <th>Date</th>
                             <th>Statut</th>
+                            <th style="width:120px;">Action</th>
                         </tr>
                     </thead>
                     <tbody id="table-orders">
@@ -193,6 +208,15 @@
                 </table>
             </div>
         </section>
+
+        <!-- MODALE DÉTAIL COMMANDE -->
+        <div class="modal-overlay" id="order-detail-modal" onclick="if(event.target===this)closeOrderDetail()">
+            <div class="modal-content" style="max-width:500px;">
+                <span class="modal-close" onclick="closeOrderDetail()">&times;</span>
+                <h2>D&eacute;tail Commande</h2>
+                <div id="order-detail-content"></div>
+            </div>
+        </div>
 
     </main>
 
