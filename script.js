@@ -341,7 +341,7 @@ function openProductDetail(id) {
             '</button>' +
             '<div class="pdetail-stock">' +
                 '<span class="stock-high"><i class="fa-solid fa-circle"></i> En stock</span>' +
-                '<span class="stock-sold"><i class="fa-solid fa-fire"></i> 18 vendus ce mois</span>' +
+                '<span class="stock-sold"><i class="fa-solid fa-fire"></i> Tr&egrave;s demand&eacute;</span>' +
             '</div>' +
             '<div class="pdetail-trust">' +
                 '<span><i class="fa-solid fa-truck"></i> Livraison 24h</span>' +
